@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nudge | Checkpoint</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-surface": "#2f3131",
+                    "on-primary-fixed-variant": "#005140",
+                    "on-primary": "#ffffff",
+                    "secondary": "#006d41",
+                    "primary-fixed": "#8cf6d6",
+                    "surface": "#f9f9f9",
+                    "primary-container": "#00846a",
+                    "surface-container": "#eeeeee",
+                    "background": "#f9f9f9",
+                    "secondary-fixed-dim": "#7adaa1",
+                    "on-secondary-fixed": "#002110",
+                    "tertiary-fixed": "#a6f1dd",
+                    "inverse-on-surface": "#f1f1f1",
+                    "surface-tint": "#006b56",
+                    "on-background": "#1a1c1c",
+                    "on-surface-variant": "#3d4945",
+                    "on-secondary-fixed-variant": "#005230",
+                    "on-surface": "#1a1c1c",
+                    "inverse-primary": "#70d9ba",
+                    "primary": "#006954",
+                    "surface-variant": "#e2e2e2",
+                    "on-tertiary-fixed": "#00201a",
+                    "tertiary-fixed-dim": "#8ad5c1",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-container": "#f4fffa",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#f4f3f3",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#95f7bb",
+                    "secondary-container": "#95f7bb",
+                    "on-primary-fixed": "#002018",
+                    "on-tertiary-fixed-variant": "#005143",
+                    "on-primary-container": "#f5fff9",
+                    "outline": "#6d7a74",
+                    "surface-container-highest": "#e2e2e2",
+                    "surface-container-high": "#e8e8e8",
+                    "on-error": "#ffffff",
+                    "tertiary": "#146858",
+                    "error-container": "#ffdad6",
+                    "outline-variant": "#bdc9c3",
+                    "surface-dim": "#dadada",
+                    "surface-bright": "#f9f9f9",
+                    "tertiary-container": "#358170",
+                    "on-secondary-container": "#007346",
+                    "error": "#ba1a1a",
+                    "primary-fixed-dim": "#70d9ba",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "container-max": "1120px",
+                    "stack-sm": "12px",
+                    "base": "8px",
+                    "margin-mobile": "16px",
+                    "stack-lg": "48px",
+                    "margin-desktop": "40px",
+                    "stack-md": "24px"
+            },
+            "fontFamily": {
+                    "title-md": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "label-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #EEEEEE;
+            color: #1a1c1c;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hover-lift {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 20px rgba(31, 111, 95, 0.08);
+        }
+        .checkpoint-mask {
+            backdrop-filter: blur(10px);
+            background: rgba(238, 238, 238, 0.8);
+        }
+        .task-ring {
+            border: 2px solid #DDDDDD;
+            transition: all 0.3s ease;
+        }
+        .file-drop-zone {
+            border: 2px dashed #bdc9c3;
+            transition: all 0.3s ease;
+        }
+        .file-drop-zone:hover {
+            border-color: #006954;
+            background: rgba(0, 105, 84, 0.02);
+        }
+    </style>
+</head>
+<body class="min-h-screen overflow-hidden">
+<!-- Transactional Screen: Navigation Suppressed per Mandatory Protocol -->
+<main class="relative h-screen w-full flex items-center justify-center p-gutter">
+<!-- Background Atmospheric Element -->
+<div class="absolute inset-0 pointer-events-none opacity-40">
+
+</div>
+<!-- Checkpoint Content Container -->
+<div class="relative z-10 w-full max-w-[640px] animate-in fade-in zoom-in duration-500">
+<!-- Close/Back Action (Suppresses Navigation) -->
+<button class="absolute -top-12 right-0 group flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="font-label-sm text-label-sm">BACK TO ALL TASKS</span>
+<span class="material-symbols-outlined">close</span>
+</button>
+<!-- Main Focus Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-variant p-margin-desktop shadow-sm">
+<!-- Task Identity -->
+<div class="flex items-center gap-stack-sm mb-stack-lg">
+<div class="task-ring w-6 h-6 rounded-full flex-shrink-0"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant tracking-widest">ACTIVE TASK</span>
+</div>
+<h1 class="font-display-lg text-display-lg mb-base text-primary">Draft Q4 Report</h1>
+<p class="font-title-md text-title-md text-on-surface-variant mb-stack-lg">How is it going?</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+<!-- Option 1: Submit Proof -->
+<div class="hover-lift cursor-pointer bg-white border border-surface-variant rounded-lg p-stack-md flex flex-col items-center text-center group" id="submit-option">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-stack-sm text-on-primary-fixed">
+<span class="material-symbols-outlined">cloud_upload</span>
+</div>
+<h3 class="font-title-md text-title-md text-primary mb-base">Submit Proof</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Upload your progress or final draft.</p>
+</div>
+<!-- Option 2: I'm Blocked -->
+<div class="hover-lift cursor-pointer bg-white border border-surface-variant rounded-lg p-stack-md flex flex-col items-center text-center group" id="blocked-option">
+<div class="w-12 h-12 rounded-full bg-error-container flex items-center justify-center mb-stack-sm text-on-error-container">
+<span class="material-symbols-outlined">report</span>
+</div>
+<h3 class="font-title-md text-title-md text-error mb-base">I'm Blocked</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Need help or facing an obstacle?</p>
+</div>
+</div>
+<!-- Hidden Upload Interface (Expands on Click) -->
+<div class="hidden mt-stack-lg border-t border-surface-variant pt-stack-lg animate-in slide-in-from-top-4 duration-300" id="upload-interface">
+<div class="file-drop-zone rounded-lg p-stack-lg flex flex-col items-center justify-center gap-stack-sm bg-surface">
+<span class="material-symbols-outlined text-4xl text-outline">upload_file</span>
+<div class="text-center">
+<p class="font-body-md text-body-md text-on-surface font-medium">Drop your file here</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">PDF, DOCX, or JPG up to 10MB</p>
+</div>
+<button class="mt-stack-sm px-stack-md py-base bg-primary text-white font-label-sm text-label-sm rounded-full transition-all active:scale-95">
+                            BROWSE FILES
+                        </button>
+</div>
+<div class="flex justify-end gap-stack-sm mt-stack-md">
+<button class="px-stack-md py-base font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" id="cancel-upload">CANCEL</button>
+<button class="px-stack-md py-base bg-primary text-white font-label-sm text-label-sm rounded-lg opacity-50 cursor-not-allowed">CONFIRM SUBMISSION</button>
+</div>
+</div>
+<!-- Hidden Blocked Interface -->
+<div class="hidden mt-stack-lg border-t border-surface-variant pt-stack-lg animate-in slide-in-from-top-4 duration-300" id="blocked-interface">
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-base uppercase">What's holding you back?</label>
+<textarea class="w-full bg-white border-b border-surface-variant focus:border-primary focus:ring-0 p-base font-body-md text-body-md outline-none transition-all resize-none h-24" placeholder="Briefly describe the bottleneck..."></textarea>
+<div class="flex justify-end gap-stack-sm mt-stack-md">
+<button class="px-stack-md py-base font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" id="cancel-blocked">CANCEL</button>
+<button class="px-stack-md py-base bg-error text-white font-label-sm text-label-sm rounded-lg transition-all active:scale-95">NOTIFY TEAM</button>
+</div>
+</div>
+</div>
+<!-- Footer Quote -->
+<div class="mt-stack-lg text-center opacity-40">
+<p class="font-body-md text-body-md italic">"Focus is the art of knowing what to ignore."</p>
+</div>
+</div>
+</main>
+<!-- Visual Polish: Soft Ambient Glows -->
+<div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary opacity-5 blur-[120px] pointer-events-none rounded-full"></div>
+<div class="fixed bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-tertiary opacity-5 blur-[120px] pointer-events-none rounded-full"></div>
+<script>
+        const submitBtn = document.getElementById('submit-option');
+        const blockedBtn = document.getElementById('blocked-option');
+        const uploadInterface = document.getElementById('upload-interface');
+        const blockedInterface = document.getElementById('blocked-interface');
+        const cancelUpload = document.getElementById('cancel-upload');
+        const cancelBlocked = document.getElementById('cancel-blocked');
+
+        submitBtn.addEventListener('click', () => {
+            uploadInterface.classList.remove('hidden');
+            blockedInterface.classList.add('hidden');
+            submitBtn.classList.add('ring-2', 'ring-primary');
+            blockedBtn.classList.remove('ring-2', 'ring-error');
+        });
+
+        blockedBtn.addEventListener('click', () => {
+            blockedInterface.classList.remove('hidden');
+            uploadInterface.classList.add('hidden');
+            blockedBtn.classList.add('ring-2', 'ring-error');
+            submitBtn.classList.remove('ring-2', 'ring-primary');
+        });
+
+        cancelUpload.addEventListener('click', () => {
+            uploadInterface.classList.add('hidden');
+            submitBtn.classList.remove('ring-2', 'ring-primary');
+        });
+
+        cancelBlocked.addEventListener('click', () => {
+            blockedInterface.classList.add('hidden');
+            blockedBtn.classList.remove('ring-2', 'ring-error');
+        });
+
+        // Simple Drag & Drop Visuals
+        const dropZone = document.querySelector('.file-drop-zone');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('bg-primary-fixed', 'border-primary');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('bg-primary-fixed', 'border-primary');
+        });
+    </script>
+</body></html>

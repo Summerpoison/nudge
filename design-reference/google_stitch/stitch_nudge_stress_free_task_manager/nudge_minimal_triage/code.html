@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nudge | Smart Triage</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#f9f9f9",
+                    "primary": "#006d41",
+                    "on-surface-variant": "#3e4941",
+                    "on-primary-fixed-variant": "#005230",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#e8e8e8",
+                    "surface-tint": "#006d41",
+                    "secondary-container": "#8cf6d6",
+                    "on-error-container": "#93000a",
+                    "surface-container-highest": "#e2e2e2",
+                    "secondary-fixed": "#8cf6d6",
+                    "tertiary": "#186a5a",
+                    "surface-variant": "#e2e2e2",
+                    "on-tertiary-container": "#005648",
+                    "inverse-on-surface": "#f1f1f1",
+                    "surface-bright": "#f9f9f9",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#eeeeee",
+                    "outline": "#6e7a70",
+                    "on-tertiary-fixed-variant": "#005143",
+                    "secondary-fixed-dim": "#70d9ba",
+                    "primary-fixed": "#95f7bb",
+                    "on-primary-container": "#005733",
+                    "on-secondary-fixed-variant": "#005140",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-low": "#f4f3f3",
+                    "inverse-primary": "#7adaa1",
+                    "tertiary-fixed-dim": "#8ad5c1",
+                    "secondary": "#006b56",
+                    "primary-fixed-dim": "#7adaa1",
+                    "tertiary-fixed": "#a6f1dd",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#80cab7",
+                    "on-background": "#1a1c1c",
+                    "on-primary": "#ffffff",
+                    "on-secondary-container": "#00725b",
+                    "error": "#ba1a1a",
+                    "surface-dim": "#dadada",
+                    "on-tertiary-fixed": "#00201a",
+                    "on-secondary": "#ffffff",
+                    "background": "#f9f9f9",
+                    "on-surface": "#1a1c1c",
+                    "on-primary-fixed": "#002110",
+                    "primary-container": "#6fcf97",
+                    "outline-variant": "#becabf",
+                    "on-secondary-fixed": "#002018",
+                    "inverse-surface": "#2f3131"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "40px",
+                    "unit": "8px",
+                    "container-max": "1120px",
+                    "gutter": "24px",
+                    "section-gap": "64px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "display": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f9f9f9; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.4); }
+        .soft-shadow { box-shadow: 0 10px 40px rgba(0, 109, 65, 0.04); }
+        .step-transition { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hidden-step { opacity: 0; transform: translateY(10px); pointer-events: none; position: absolute; }
+        .zen-option { transition: all 0.3s ease; }
+        .zen-option:hover { background-color: white; transform: translateY(-2px); }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- Side Navigation Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low z-50 flex flex-col p-gutter">
+<div class="mb-10 px-4">
+<h1 class="font-headline-md text-headline-md font-semibold text-primary">Nudge</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Breathe deep.</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 bg-primary-container text-on-primary-container rounded-full px-4 py-3 group" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors duration-200 px-4 py-3 rounded-full" href="#">
+<span class="material-symbols-outlined">center_focus_strong</span>
+<span class="font-body-md">Focus Mode</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors duration-200 px-4 py-3 rounded-full" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-body-md">Drafts</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors duration-200 px-4 py-3 rounded-full" href="#">
+<span class="material-symbols-outlined">auto_graph</span>
+<span class="font-body-md">Insights</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors duration-200 px-4 py-3 rounded-full" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-gutter border-t border-outline-variant/30">
+<button class="w-full bg-primary text-on-primary font-label-md py-3 rounded-full mb-6 hover:opacity-90 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                Quick Entry
+            </button>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary px-4 py-3" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-body-md">Help</span>
+</a>
+</div>
+</aside>
+<!-- Top App Bar Shell -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-background/80 backdrop-blur-md">
+<div class="flex justify-between items-center h-20 px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="flex items-center gap-4">
+<span class="font-headline-lg text-headline-lg text-primary font-bold">Nudge</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="bg-surface-container border-none rounded-full pl-10 pr-4 py-2 w-64 focus:ring-2 focus:ring-primary/20 text-label-md" placeholder="Search tasks..." type="text"/>
+</div>
+<button class="bg-tertiary-container text-on-tertiary-container px-6 py-2 rounded-full font-label-md hover:opacity-80 transition-all">
+                    Check-in
+                </button>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="material-symbols-outlined hover:text-primary transition-all">notifications_active</button>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtHEQMEWdq5YwQkiaKYZzmwofDQy4JkrzDVDJfpsBwKtBkaz-9rbN5UCDpSo-qM4kDY2zV0ei8-PlNnZTc2usDNec0j54GdmMACthH7DS40sZiXdxHBQEeO5Kg_jBXoLW6JUuuG0hbhcvbYJH10bKc7JRIf9f75puV7VHqUggcpwjp-Fno8KxaCO9kstY6rvyH5QI5CL_mRsX4SvgOb2S_4z0AMUB_uwfrcKI9cY1Jtp0tYXhsS7dideamAvqI92jxeysPlO-DaiXT"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-64 pt-20 min-h-screen bg-surface">
+<div class="max-w-[800px] mx-auto px-margin-desktop py-section-gap">
+<!-- Minimal Triage View (Main Entry) -->
+<div class="step-transition flex flex-col items-center text-center" id="dashboard-view">
+<div class="mb-12">
+<h2 class="font-headline-lg text-display text-on-surface mb-4">Q4 Strategy Deck Completion</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg mx-auto">
+                        You've been focused here for a while. It's okay to step back or reach out.
+                    </p>
+</div>
+<div class="glass-card w-full rounded-lg p-10 soft-shadow flex flex-col gap-10 items-center">
+<p class="text-on-surface font-body-md italic opacity-80">"Sometimes the best way to move forward is to pause."</p>
+<div class="flex flex-col sm:flex-row gap-6 w-full max-w-md">
+<button class="flex-1 bg-primary text-on-primary py-4 px-8 rounded-full font-label-md soft-shadow hover:opacity-90 transition-all flex items-center justify-center gap-2" onclick="startTriage()">
+<span class="material-symbols-outlined text-[20px]">psychology</span>
+                            I'm Blocked
+                        </button>
+<button class="flex-1 border border-outline text-on-surface-variant py-4 px-8 rounded-full font-label-md hover:bg-surface-container transition-all" onclick="resetUI()">
+                            Finish Now
+                        </button>
+</div>
+</div>
+</div>
+<!-- Triage Selection (Step 1) -->
+<div class="hidden-step w-full flex flex-col items-center" id="triage-selection">
+<div class="text-center mb-16">
+<h2 class="font-display text-display text-on-surface mb-4">What's holding you back?</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">We'll help you find the right words.</p>
+</div>
+<div class="grid grid-cols-1 gap-4 w-full max-w-md">
+<button class="zen-option bg-surface-container-lowest p-6 rounded-lg soft-shadow flex items-center gap-6 text-left border border-outline-variant/10" onclick="selectOption('time')">
+<div class="w-12 h-12 bg-primary-container/30 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+<div>
+<h4 class="font-headline-md text-body-lg font-semibold">I need more time</h4>
+<p class="text-on-surface-variant text-label-md">Request a gentle 24-hour extension.</p>
+</div>
+</button>
+<button class="zen-option bg-surface-container-lowest p-6 rounded-lg soft-shadow flex items-center gap-6 text-left border border-outline-variant/10" onclick="selectOption('help')">
+<div class="w-12 h-12 bg-secondary-container/30 rounded-full flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<div>
+<h4 class="font-headline-md text-body-lg font-semibold">I need a fresh pair of eyes</h4>
+<p class="text-on-surface-variant text-label-md">Ask a teammate for a quick collaboration.</p>
+</div>
+</button>
+<button class="zen-option bg-surface-container-lowest p-6 rounded-lg soft-shadow flex items-center gap-6 text-left border border-outline-variant/10" onclick="selectOption('waiting')">
+<div class="w-12 h-12 bg-tertiary-container/30 rounded-full flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">hourglass_empty</span>
+</div>
+<div>
+<h4 class="font-headline-md text-body-lg font-semibold">I'm waiting on information</h4>
+<p class="text-on-surface-variant text-label-md">Send a friendly nudge for data.</p>
+</div>
+</button>
+</div>
+<button class="mt-12 text-on-surface-variant font-label-md hover:text-primary flex items-center gap-2" onclick="resetUI()">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                    Return to dashboard
+                </button>
+</div>
+<!-- Email Drafter (Step 2) -->
+<div class="hidden-step w-full" id="email-drafter">
+<div class="text-center mb-10">
+<h2 class="font-display text-display text-on-surface mb-2">A gentle request.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Here is a draft to take the pressure off.</p>
+</div>
+<div class="glass-card rounded-lg soft-shadow overflow-hidden">
+<div class="p-6 border-b border-outline-variant/20 flex flex-col gap-3">
+<div class="flex items-center gap-3">
+<span class="text-label-md text-on-surface-variant w-16">To:</span>
+<span class="text-label-md font-medium text-on-surface" id="recipient-tag">Sarah Chen</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-label-md text-on-surface-variant w-16">Subject:</span>
+<span class="text-label-md font-medium text-on-surface" id="email-subject">Update on Q4 Strategy Deck</span>
+</div>
+</div>
+<div class="p-8">
+<textarea class="w-full min-h-[200px] bg-transparent border-none focus:ring-0 font-body-md text-body-md leading-relaxed resize-none p-0 text-on-surface-variant" id="email-body"></textarea>
+</div>
+<div class="p-6 bg-surface-container-lowest/50 flex justify-between items-center">
+<button class="text-on-surface-variant font-label-md hover:text-primary px-4 py-2" onclick="selectOption('back')">Change option</button>
+<button class="bg-primary text-on-primary px-10 py-3 rounded-full font-label-md soft-shadow hover:opacity-90 flex items-center gap-2 group" onclick="sendEmail()">
+<span>Send</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Success Splash -->
+<div class="hidden-step text-center py-10" id="success-state">
+<div class="w-24 h-24 bg-primary-container/20 rounded-full flex items-center justify-center mx-auto mb-8">
+<span class="material-symbols-outlined text-primary text-[48px]" style="font-variation-settings: 'FILL' 1;">spa</span>
+</div>
+<h2 class="font-display text-display text-on-surface mb-4">Space created.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-12 max-w-sm mx-auto">
+                    The request is sent. Take a moment to breathe before moving to your next task.
+                </p>
+<button class="bg-surface-container-highest text-on-surface px-12 py-4 rounded-full font-label-md hover:bg-surface-container-high transition-all" onclick="resetUI()">
+                    Back to Dashboard
+                </button>
+</div>
+</div>
+</main>
+<script>
+        const views = {
+            dashboard: document.getElementById('dashboard-view'),
+            triage: document.getElementById('triage-selection'),
+            drafter: document.getElementById('email-drafter'),
+            success: document.getElementById('success-state')
+        };
+
+        const emailContent = {
+            time: {
+                subject: "Regarding the Q4 Strategy Deck timeline",
+                body: "Hi Sarah,\n\nI’m making progress on the Q4 Strategy Deck, but I want to ensure the final output is high-quality. Would it be possible to push the deadline by 24 hours to Wednesday morning? This will allow me to polish the data visualizations properly.\n\nBest,\nAlex",
+                recipient: "Sarah Chen (Manager)"
+            },
+            help: {
+                subject: "Quick collaboration on Q4 Strategy Deck?",
+                body: "Hi Jordan,\n\nI’m working through the market analysis section of the Q4 Strategy Deck and would value your perspective on the competitive landscape slides.\n\nDo you have 15 minutes this afternoon for a quick sync?\n\nThanks!\nAlex",
+                recipient: "Jordan Smith (Teammate)"
+            },
+            waiting: {
+                subject: "Question: Q3 Revenue Figures for Strategy Deck",
+                body: "Hi Marcus,\n\nI’m currently finalizing the Q4 Strategy Deck and just need the Q3 revenue figures we discussed to complete the performance section.\n\nCould you let me know when those might be ready?\n\nCheers,\nAlex",
+                recipient: "Marcus Vance (Finance)"
+            }
+        };
+
+        function startTriage() {
+            showStep('triage');
+        }
+
+        function selectOption(option) {
+            if(option === 'back') {
+                showStep('triage');
+                return;
+            }
+            
+            const draft = emailContent[option];
+            document.getElementById('email-subject').innerText = draft.subject;
+            document.getElementById('email-body').value = draft.body;
+            document.getElementById('recipient-tag').innerText = draft.recipient;
+            
+            showStep('drafter');
+        }
+
+        function sendEmail() {
+            showStep('success');
+        }
+
+        function resetUI() {
+            showStep('dashboard');
+        }
+
+        function showStep(stepName) {
+            Object.keys(views).forEach(key => {
+                if (key === stepName) {
+                    views[key].classList.remove('hidden-step');
+                    views[key].classList.add('flex', 'flex-col');
+                } else {
+                    views[key].classList.add('hidden-step');
+                    views[key].classList.remove('flex', 'flex-col');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body></html>

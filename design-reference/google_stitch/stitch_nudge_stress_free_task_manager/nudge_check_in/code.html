@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nudge | Check-in Interface</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#006d41",
+                    "surface-container-low": "#f4f3f3",
+                    "on-primary-fixed-variant": "#005230",
+                    "background": "#f9f9f9",
+                    "primary-container": "#6fcf97",
+                    "on-surface": "#1a1c1c",
+                    "surface": "#f9f9f9",
+                    "on-secondary-container": "#00725b",
+                    "secondary-container": "#8cf6d6",
+                    "surface-variant": "#e2e2e2",
+                    "error": "#ba1a1a",
+                    "surface-dim": "#dadada",
+                    "on-primary-container": "#005733",
+                    "on-tertiary-fixed-variant": "#005143",
+                    "surface-container-high": "#e8e8e8",
+                    "primary": "#006d41",
+                    "tertiary-container": "#80cab7",
+                    "tertiary": "#186a5a",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#6e7a70",
+                    "on-surface-variant": "#3e4941",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-background": "#1a1c1c",
+                    "on-primary-fixed": "#002110",
+                    "secondary-fixed": "#8cf6d6",
+                    "secondary-fixed-dim": "#70d9ba",
+                    "inverse-surface": "#2f3131",
+                    "on-secondary-fixed": "#002018",
+                    "outline-variant": "#becabf",
+                    "on-secondary-fixed-variant": "#005140",
+                    "inverse-on-surface": "#f1f1f1",
+                    "on-tertiary-container": "#005648",
+                    "on-error-container": "#93000a",
+                    "surface-container": "#eeeeee",
+                    "tertiary-fixed-dim": "#8ad5c1",
+                    "primary-fixed": "#95f7bb",
+                    "tertiary-fixed": "#a6f1dd",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed-dim": "#7adaa1",
+                    "inverse-primary": "#7adaa1",
+                    "on-tertiary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "secondary": "#006b56",
+                    "error-container": "#ffdad6",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#f9f9f9",
+                    "on-tertiary-fixed": "#00201a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "unit": "8px",
+                    "gutter": "24px",
+                    "container-max": "1120px",
+                    "margin-desktop": "40px",
+                    "section-gap": "64px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "display": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9f9;
+            color: #1a1c1c;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .long-soft-shadow {
+            box-shadow: 0 10px 30px rgba(31, 111, 95, 0.08);
+        }
+        .glass-blur {
+            backdrop-filter: blur(12px);
+            background-color: rgba(249, 249, 249, 0.8);
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- Shell: TopAppBar (Locked for Desktop via JSON Rule) -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 flex justify-between items-center h-20 px-margin-desktop max-w-container-max mx-auto bg-background/80 backdrop-blur-md">
+<div class="flex items-center gap-4">
+<h1 class="font-headline-lg text-headline-lg text-primary font-extrabold tracking-tight">Nudge</h1>
+</div>
+<div class="flex items-center gap-gutter">
+<div class="relative w-72">
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 px-6 focus:ring-2 focus:ring-primary text-body-md" placeholder="Search insights..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">notifications_active</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md hover:opacity-90 transition-opacity">
+                    Check-in
+                </button>
+</div>
+</div>
+</header>
+<!-- Shell: SideNavBar (Locked via JSON Rule) -->
+<nav class="h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-surface-dim flex flex-col p-gutter border-r border-surface-variant/30">
+<div class="mb-12">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container">auto_awesome</span>
+</div>
+<div>
+<p class="font-headline-md text-headline-md font-semibold text-primary leading-tight">Nudge</p>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-70">Breathe deep.</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary px-4 py-3 hover:bg-surface-variant/50 transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-primary-container text-on-primary-container rounded-full px-4 py-3 scale-95 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">center_focus_strong</span>
+<span class="font-body-md text-body-md font-semibold">Focus Mode</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary px-4 py-3 hover:bg-surface-variant/50 transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-body-md text-body-md">Drafts</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary px-4 py-3 hover:bg-surface-variant/50 transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined">auto_graph</span>
+<span class="font-body-md text-body-md">Insights</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary px-4 py-3 hover:bg-surface-variant/50 transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+<div class="mt-auto border-t border-surface-variant/30 pt-6">
+<button class="w-full bg-primary-container/20 text-primary font-semibold py-4 rounded-2xl mb-4 hover:bg-primary-container/30 transition-colors">
+                Quick Entry
+            </button>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary px-4 py-2" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-body-md text-body-md">Help</span>
+</a>
+</div>
+</nav>
+<!-- Main Canvas (Background Content) -->
+<main class="ml-64 mt-20 p-margin-desktop h-[calc(100vh-5rem)] overflow-y-auto">
+<div class="max-w-container-max mx-auto opacity-20 pointer-events-none">
+<header class="mb-12">
+<h2 class="font-headline-lg text-headline-lg mb-2">Morning Overview</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">You have 3 tasks reaching focus milestones today.</p>
+</header>
+<div class="grid grid-cols-12 gap-gutter">
+<div class="col-span-8 space-y-gutter">
+<div class="bg-surface-container-lowest rounded-lg p-gutter long-soft-shadow">
+<h3 class="font-headline-md text-headline-md mb-6">Current Focus</h3>
+<div class="flex items-center gap-6 p-6 bg-primary-container/10 rounded-2xl border border-primary/10">
+<div class="w-16 h-16 rounded-full border-4 border-primary border-t-transparent animate-spin-slow"></div>
+<div>
+<h4 class="font-headline-md text-headline-md text-primary">Redesign Checkout Flow</h4>
+<p class="text-on-surface-variant">Focused for 45 minutes</p>
+</div>
+</div>
+</div>
+</div>
+<div class="col-span-4">
+<div class="bg-surface-container-lowest rounded-lg p-gutter long-soft-shadow h-full">
+<h3 class="font-headline-md text-headline-md mb-6">Daily Progress</h3>
+<div class="aspect-square flex items-center justify-center relative">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container" cx="50%" cy="50%" fill="transparent" r="40%" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="50%" cy="50%" fill="transparent" r="40%" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="75.36" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-display text-display text-primary">70%</span>
+<span class="text-label-md font-label-md text-on-surface-variant">of Goal</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FOCUS INTERFACE OVERLAY (The Modal-like Check-in) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-gutter transition-all duration-500" id="checkin-modal">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-on-surface/40 backdrop-blur-sm transition-opacity duration-500 opacity-100"></div>
+<!-- Modal Content -->
+<div class="relative w-full max-w-2xl bg-surface-container-lowest rounded-xl overflow-hidden long-soft-shadow animate-in fade-in zoom-in duration-300">
+<!-- Atmospheric Header -->
+<div class="relative h-32 overflow-hidden bg-primary-container/20">
+
+<div class="absolute inset-0 flex items-center px-gutter">
+<div class="bg-surface-container-lowest/80 backdrop-blur-md px-4 py-2 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">timer</span>
+<span class="font-label-md text-label-md text-primary tracking-wide uppercase">Checkpoint Reached</span>
+</div>
+</div>
+</div>
+<!-- Main Form Body -->
+<div class="p-12 space-y-12">
+<div class="text-center space-y-4">
+<h2 class="font-display text-display text-on-surface leading-tight">
+                        How is it going with <span class="text-primary">Redesign Checkout Flow</span>?
+                    </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto">
+                        Take a deep breath. Acknowledge your progress, or flag a hurdle. No pressure.
+                    </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Path 1: Submit Proof -->
+<div class="group cursor-pointer">
+<div class="bg-surface-container-low hover:bg-primary-container/10 border-2 border-transparent hover:border-primary/20 transition-all rounded-lg p-gutter text-center space-y-4 h-full flex flex-col justify-center">
+<div class="w-16 h-16 bg-primary-container/30 rounded-full mx-auto flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">upload_file</span>
+</div>
+<h3 class="font-headline-md text-headline-md">Submit Proof</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Upload a screenshot or jot down a quick update of what's done.</p>
+<button class="mt-4 bg-primary text-on-primary py-3 px-8 rounded-full font-label-md text-label-md hover:scale-105 transition-transform shadow-lg shadow-primary/20" onclick="showUpload()">
+                                Choose Files
+                            </button>
+</div>
+</div>
+<!-- Path 2: I'm Blocked -->
+<div class="group cursor-pointer">
+<div class="bg-surface-container-low hover:bg-error-container/10 border-2 border-transparent hover:border-error/20 transition-all rounded-lg p-gutter text-center space-y-4 h-full flex flex-col justify-center">
+<div class="w-16 h-16 bg-error-container/30 rounded-full mx-auto flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-error text-3xl">emergency_home</span>
+</div>
+<h3 class="font-headline-md text-headline-md">I'm Blocked</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Something's in the way. Let's triage and break it down into smaller bits.</p>
+<button class="mt-4 border-2 border-outline-variant text-on-surface-variant py-3 px-8 rounded-full font-label-md text-label-md hover:bg-surface-container-highest transition-colors" onclick="showTriage()">
+                                Flag Issue
+                            </button>
+</div>
+</div>
+</div>
+<!-- Subtle Dismissal -->
+<div class="text-center">
+<button class="text-on-surface-variant/60 hover:text-on-surface transition-colors font-label-md text-label-md uppercase tracking-widest" onclick="closeModal()">
+                        Dismiss for 15 minutes
+                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Hidden Sub-sections for interactions -->
+<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-gutter" id="upload-panel">
+<div class="absolute inset-0 bg-on-surface/60 backdrop-blur-md"></div>
+<div class="relative w-full max-w-xl bg-surface-container-lowest rounded-xl p-12 long-soft-shadow">
+<h3 class="font-display text-headline-lg mb-6">Drop your proof here</h3>
+<div class="border-2 border-dashed border-primary/20 bg-primary-container/5 rounded-lg h-64 flex flex-col items-center justify-center gap-4 group hover:bg-primary-container/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-5xl opacity-40">cloud_upload</span>
+<p class="font-body-md text-body-md text-on-surface-variant">Drag &amp; drop or <span class="text-primary font-bold">browse</span></p>
+</div>
+<textarea class="w-full mt-6 bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary min-h-[100px]" placeholder="Any quick notes? (Optional)"></textarea>
+<div class="mt-8 flex justify-end gap-4">
+<button class="px-8 py-3 rounded-full font-label-md text-label-md text-on-surface-variant" onclick="hidePanels()">Cancel</button>
+<button class="px-12 py-3 bg-primary text-on-primary rounded-full font-label-md text-label-md shadow-lg shadow-primary/20">Submit Update</button>
+</div>
+</div>
+</div>
+<script>
+        function showUpload() {
+            document.getElementById('upload-panel').classList.remove('hidden');
+        }
+
+        function showTriage() {
+            // Placeholder for triage logic
+            alert("Triage mode activated. Let's break this down into smaller steps.");
+        }
+
+        function hidePanels() {
+            document.getElementById('upload-panel').classList.add('hidden');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('checkin-modal');
+            modal.style.opacity = '0';
+            modal.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }, 500);
+        }
+
+        // Simple mouse tracking for background depth
+        document.addEventListener('mousemove', (e) => {
+            const modalContent = document.querySelector('#checkin-modal > div:last-child');
+            if(modalContent) {
+                const xAxis = (window.innerWidth / 2 - e.pageX) / 50;
+                const yAxis = (window.innerHeight / 2 - e.pageY) / 50;
+                modalContent.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+        });
+    </script>
+</body></html>

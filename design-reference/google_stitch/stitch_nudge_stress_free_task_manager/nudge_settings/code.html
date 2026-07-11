@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nudge - Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#00201a",
+                    "on-error": "#ffffff",
+                    "surface-container-low": "#f4f3f3",
+                    "on-secondary-fixed": "#002018",
+                    "primary-fixed-dim": "#7adaa1",
+                    "surface-tint": "#006d41",
+                    "surface-container": "#eeeeee",
+                    "surface-dim": "#dadada",
+                    "on-primary-fixed": "#002110",
+                    "tertiary": "#186a5a",
+                    "primary-container": "#6fcf97",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface": "#1a1c1c",
+                    "secondary": "#006b56",
+                    "secondary-fixed-dim": "#70d9ba",
+                    "outline": "#6e7a70",
+                    "inverse-primary": "#7adaa1",
+                    "surface-variant": "#e2e2e2",
+                    "surface": "#f9f9f9",
+                    "on-primary-container": "#005733",
+                    "inverse-on-surface": "#f1f1f1",
+                    "surface-container-highest": "#e2e2e2",
+                    "secondary-container": "#8cf6d6",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed-variant": "#005140",
+                    "on-tertiary-fixed-variant": "#005143",
+                    "tertiary-container": "#80cab7",
+                    "on-secondary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "primary": "#006d41",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#2f3131",
+                    "surface-bright": "#f9f9f9",
+                    "secondary-fixed": "#8cf6d6",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#becabf",
+                    "on-surface-variant": "#3e4941",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#8ad5c1",
+                    "on-primary-fixed-variant": "#005230",
+                    "on-background": "#1a1c1c",
+                    "on-secondary-container": "#00725b",
+                    "primary-fixed": "#95f7bb",
+                    "on-tertiary-container": "#005648",
+                    "tertiary-fixed": "#a6f1dd",
+                    "surface-container-high": "#e8e8e8",
+                    "background": "#f9f9f9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "section-gap": "64px",
+                    "unit": "8px",
+                    "margin-desktop": "40px",
+                    "gutter": "24px",
+                    "container-max": "1120px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "display": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f9f9f9;
+            color: #1a1c1c;
+            -webkit-font-smoothing: antialiased;
+        }
+        .nudge-card-shadow {
+            box-shadow: 0 10px 30px rgba(31, 111, 95, 0.08);
+        }
+        input:focus {
+            box-shadow: 0 0 0 2px #6fcf97 !important;
+            border-color: transparent !important;
+        }
+        /* Custom Slider Styling */
+        input[type='range'] {
+            -webkit-appearance: none;
+            background: rgba(31, 111, 95, 0.1);
+            border-radius: 999px;
+            height: 6px;
+        }
+        input[type='range']::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #006d41;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.1s ease-in-out;
+        }
+        input[type='range']::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body class="flex min-h-screen overflow-x-hidden font-body-md text-body-md">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low dark:bg-surface-container-highest flex flex-col p-4 gap-2 z-50">
+<div class="flex items-center gap-3 px-4 py-6">
+<div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">spa</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight">Nudge</h1>
+<p class="text-label-sm text-on-surface-variant">Stay calm</p>
+</div>
+</div>
+<nav class="mt-4 flex flex-col gap-1">
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-variant rounded-full transition-all group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">calendar_today</span>
+<span>Today</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-variant rounded-full transition-all group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">inbox</span>
+<span>Inbox</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-variant rounded-full transition-all group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">folder</span>
+<span>Projects</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-variant rounded-full transition-all group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">archive</span>
+<span>Archive</span>
+</a>
+<div class="h-[1px] bg-outline-variant/30 my-4 mx-4"></div>
+<a class="flex items-center gap-4 bg-primary-container text-on-primary-container rounded-full px-4 py-3 font-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto pb-4">
+<button class="w-full bg-primary text-on-primary font-label-md py-4 rounded-full hover:shadow-lg transition-all active:scale-95 mb-4">
+                New Nudge
+            </button>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-2 hover:bg-surface-variant rounded-full text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span>Help</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-2 hover:bg-surface-variant rounded-full text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">shield</span>
+<span>Privacy</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 p-margin-desktop max-w-container-max mx-auto w-full">
+<header class="mb-section-gap flex justify-between items-center">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Settings</h2>
+<p class="text-on-surface-variant">Configure your workspace for maximum serenity and automation.</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:bg-surface-container transition-colors rounded-full">notifications</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a serene young woman with a calm expression, soft natural lighting, against a blurred organic garden background, photography style, high-end UI profile picture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVR6njCbCfk04YicPiuDYOEil1kl4lXiplomEa7esM-RhjxLlW0nzfBCRpvVYbDtGO7kTFikTbI6PS2T3wfMvvpJUgI-RJkqYpuO-et2Xge9Mwzbea6DaPn9ZQc-veO9pPGtNjr6G37TH85y1604osqU8aJ9ioOOIS7cd3QsYvR20hJEY-nYRCqaqXQeVIl4Nj-exnpFv9hw1wG_ki5xzqoKdMizI35U81KmuSCsSxZ7sVaws56KNHpU0WLHRp8e1SpHDRrkiRYEJ6"/>
+</div>
+</div>
+</header>
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Email Configuration (Bento Card Large) -->
+<section class="col-span-12 lg:col-span-7 bg-surface-container-lowest p-8 rounded-lg nudge-card-shadow">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-full">mail</span>
+<h3 class="font-headline-md text-headline-md">Email Configuration</h3>
+</div>
+<p class="text-on-surface-variant mb-8 text-label-md">Connect your SMTP server to allow Nudge to prepare automated triage drafts seamlessly.</p>
+<div class="grid grid-cols-2 gap-6">
+<div class="col-span-2 md:col-span-1 space-y-2">
+<label class="font-label-md text-on-surface">SMTP Host</label>
+<input class="w-full bg-[rgba(31,111,95,0.05)] border-none rounded-full px-6 py-3 text-body-md focus:ring-0" placeholder="smtp.provider.com" type="text"/>
+</div>
+<div class="col-span-2 md:col-span-1 space-y-2">
+<label class="font-label-md text-on-surface">Port</label>
+<input class="w-full bg-[rgba(31,111,95,0.05)] border-none rounded-full px-6 py-3 text-body-md focus:ring-0" placeholder="587" type="text"/>
+</div>
+<div class="col-span-2 md:col-span-1 space-y-2">
+<label class="font-label-md text-on-surface">Username</label>
+<input class="w-full bg-[rgba(31,111,95,0.05)] border-none rounded-full px-6 py-3 text-body-md focus:ring-0" placeholder="user@nudge.app" type="text"/>
+</div>
+<div class="col-span-2 md:col-span-1 space-y-2">
+<label class="font-label-md text-on-surface">Password</label>
+<input class="w-full bg-[rgba(31,111,95,0.05)] border-none rounded-full px-6 py-3 text-body-md focus:ring-0" placeholder="••••••••••••" type="password"/>
+</div>
+</div>
+<div class="mt-8 flex justify-end gap-4">
+<button class="px-6 py-3 rounded-full border-[1.5px] border-secondary text-secondary font-label-md hover:bg-secondary/5 transition-colors active:scale-95">
+                        Test Connection
+                    </button>
+<button class="px-8 py-3 rounded-full bg-primary text-on-primary font-label-md hover:shadow-md transition-all active:scale-95">
+                        Save Changes
+                    </button>
+</div>
+</section>
+<!-- Buffer & Checkpoints (Bento Card Small) -->
+<section class="col-span-12 lg:col-span-5 bg-surface-container-lowest p-8 rounded-lg nudge-card-shadow flex flex-col">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-full">timelapse</span>
+<h3 class="font-headline-md text-headline-md">Buffer &amp; Checkpoints</h3>
+</div>
+<div class="space-y-10 flex-1">
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-on-surface">Default Buffer</label>
+<span class="text-primary font-bold text-label-md" id="buffer-val">20%</span>
+</div>
+<input class="w-full cursor-pointer" max="50" min="0" oninput="document.getElementById('buffer-val').innerText = this.value + '%'" type="range" value="20"/>
+<p class="text-label-sm text-on-surface-variant">Extra time added to tasks to prevent burnout.</p>
+</div>
+<div class="space-y-4">
+<label class="font-label-md text-on-surface block">Checkpoint Intervals</label>
+<div class="flex gap-4">
+<div class="flex-1 space-y-1">
+<span class="text-label-sm text-on-surface-variant px-2">First</span>
+<input class="w-full bg-[rgba(31,111,95,0.05)] border-none rounded-full px-6 py-3 text-body-md text-center focus:ring-0" type="text" value="50%"/>
+</div>
+<div class="flex-1 space-y-1">
+<span class="text-label-sm text-on-surface-variant px-2">Second</span>
+<input class="w-full bg-[rgba(31,111,95,0.05)] border-none rounded-full px-6 py-3 text-body-md text-center focus:ring-0" type="text" value="75%"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Stakeholder Contacts (Table) -->
+<section class="col-span-12 bg-surface-container-lowest p-8 rounded-lg nudge-card-shadow">
+<div class="flex justify-between items-center mb-8">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-full">groups</span>
+<h3 class="font-headline-md text-headline-md">Stakeholder Contacts</h3>
+</div>
+<button class="flex items-center gap-2 px-6 py-2 bg-secondary-container text-on-secondary-container rounded-full font-label-md hover:bg-secondary-fixed transition-colors">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        Add Contact
+                    </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full border-separate border-spacing-y-2">
+<thead>
+<tr class="text-left text-label-sm text-on-surface-variant uppercase tracking-widest">
+<th class="px-6 py-3 font-medium">Name</th>
+<th class="px-6 py-3 font-medium">Role</th>
+<th class="px-6 py-3 font-medium">Email</th>
+<th class="px-6 py-3 font-medium text-right">Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr class="bg-surface hover:bg-surface-container transition-colors rounded-full group">
+<td class="px-6 py-4 rounded-l-full">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-container/30 flex items-center justify-center text-primary font-bold text-label-sm">JS</div>
+<span class="font-medium">Jane Smith</span>
+</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Product Manager</td>
+<td class="px-6 py-4 text-on-surface-variant">jane.smith@corp.com</td>
+<td class="px-6 py-4 text-right rounded-r-full">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">edit</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-error ml-2 transition-colors">delete</button>
+</td>
+</tr>
+<tr class="bg-surface hover:bg-surface-container transition-colors rounded-full group">
+<td class="px-6 py-4 rounded-l-full">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary font-bold text-label-sm">MK</div>
+<span class="font-medium">Marcus Kane</span>
+</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Lead Designer</td>
+<td class="px-6 py-4 text-on-surface-variant">marcus@studio.com</td>
+<td class="px-6 py-4 text-right rounded-r-full">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">edit</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-error ml-2 transition-colors">delete</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- General Preferences (Bento Row) -->
+<section class="col-span-12 bg-surface-container-lowest p-8 rounded-lg nudge-card-shadow grid grid-cols-1 md:grid-cols-3 gap-12">
+<!-- Notifications -->
+<div class="space-y-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-full">graphic_eq</span>
+<h4 class="font-label-md text-on-surface">Zen Notifications</h4>
+</div>
+<div class="space-y-3">
+<label class="flex items-center justify-between p-4 bg-surface rounded-full cursor-pointer hover:bg-surface-container transition-colors">
+<span class="text-body-md">Morning Mist</span>
+<input checked="" class="text-primary focus:ring-primary h-5 w-5 bg-background border-outline" name="sound" type="radio"/>
+</label>
+<label class="flex items-center justify-between p-4 bg-surface rounded-full cursor-pointer hover:bg-surface-container transition-colors">
+<span class="text-body-md">Forest Stream</span>
+<input class="text-primary focus:ring-primary h-5 w-5 bg-background border-outline" name="sound" type="radio"/>
+</label>
+</div>
+</div>
+<!-- Theme Selection -->
+<div class="space-y-6 border-x-0 md:border-x border-outline-variant/30 md:px-12">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-full">palette</span>
+<h4 class="font-label-md text-on-surface">Visual Theme</h4>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 flex flex-col items-center gap-2 p-4 rounded-2xl border-2 border-primary bg-primary-container/10 group transition-all" onclick="document.documentElement.classList.remove('dark')">
+<div class="w-full h-12 bg-white rounded-lg shadow-sm"></div>
+<span class="text-label-sm font-bold text-primary">Light Mode</span>
+</button>
+<button class="flex-1 flex flex-col items-center gap-2 p-4 rounded-2xl border-2 border-transparent hover:border-outline-variant transition-all" onclick="document.documentElement.classList.add('dark')">
+<div class="w-full h-12 bg-inverse-surface rounded-lg"></div>
+<span class="text-label-sm text-on-surface-variant">Dark Mode</span>
+</button>
+</div>
+</div>
+<!-- Data Export -->
+<div class="space-y-6 flex flex-col">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-full">download</span>
+<h4 class="font-label-md text-on-surface">Data &amp; Privacy</h4>
+</div>
+<p class="text-label-sm text-on-surface-variant">Export your task history and preferences for backup or migration.</p>
+<div class="mt-auto space-y-3">
+<button class="w-full px-6 py-4 bg-surface-container-high rounded-full font-label-md flex justify-between items-center hover:bg-surface-variant transition-colors group">
+<span>Export workspace (.json)</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<button class="w-full px-6 py-4 bg-error-container text-on-error-container rounded-full font-label-md flex justify-between items-center hover:bg-error/10 transition-colors">
+<span>Clear all data</span>
+<span class="material-symbols-outlined">delete_forever</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+<footer class="mt-section-gap mb-12 text-center text-label-sm text-on-surface-variant opacity-60">
+<p>© 2024 Nudge Productivity Platform. Designed for deep work and mental clarity.</p>
+</footer>
+</main>
+<!-- Floating Action Feedback (JS Simulation) -->
+<div class="fixed bottom-8 right-8 bg-inverse-surface text-inverse-on-surface px-6 py-4 rounded-full shadow-xl translate-y-32 opacity-0 transition-all duration-300 flex items-center gap-3 z-[100]" id="toast">
+<span class="material-symbols-outlined text-primary-fixed-dim">check_circle</span>
+<span class="font-label-md">Settings updated successfully</span>
+</div>
+<script>
+        // Micro-interactions
+        const buttons = document.querySelectorAll('button');
+        const toast = document.getElementById('toast');
+
+        buttons.forEach(btn => {
+            if (btn.innerText === 'Save Changes' || btn.innerText === 'Test Connection') {
+                btn.addEventListener('click', () => {
+                    toast.classList.remove('translate-y-32', 'opacity-0');
+                    setTimeout(() => {
+                        toast.classList.add('translate-y-32', 'opacity-0');
+                    }, 3000);
+                });
+            }
+        });
+
+        // Theme Switch logic handled via inline onclick in HTML for simplicity
+    </script>
+</body></html>

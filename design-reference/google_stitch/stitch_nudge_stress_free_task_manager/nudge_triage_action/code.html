@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nudge | Smart Triage</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#006d41",
+                    "surface-container-low": "#f4f3f3",
+                    "on-primary-fixed-variant": "#005230",
+                    "background": "#f9f9f9",
+                    "primary-container": "#6fcf97",
+                    "on-surface": "#1a1c1c",
+                    "surface": "#f9f9f9",
+                    "on-secondary-container": "#00725b",
+                    "secondary-container": "#8cf6d6",
+                    "surface-variant": "#e2e2e2",
+                    "error": "#ba1a1a",
+                    "surface-dim": "#dadada",
+                    "on-primary-container": "#005733",
+                    "on-tertiary-fixed-variant": "#005143",
+                    "surface-container-high": "#e8e8e8",
+                    "primary": "#006d41",
+                    "tertiary-container": "#80cab7",
+                    "tertiary": "#186a5a",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#6e7a70",
+                    "on-surface-variant": "#3e4941",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-background": "#1a1c1c",
+                    "on-primary-fixed": "#002110",
+                    "secondary-fixed": "#8cf6d6",
+                    "secondary-fixed-dim": "#70d9ba",
+                    "inverse-surface": "#2f3131",
+                    "on-secondary-fixed": "#002018",
+                    "outline-variant": "#becabf",
+                    "on-secondary-fixed-variant": "#005140",
+                    "inverse-on-surface": "#f1f1f1",
+                    "on-tertiary-container": "#005648",
+                    "on-error-container": "#93000a",
+                    "surface-container": "#eeeeee",
+                    "tertiary-fixed-dim": "#8ad5c1",
+                    "primary-fixed": "#95f7bb",
+                    "tertiary-fixed": "#a6f1dd",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed-dim": "#7adaa1",
+                    "inverse-primary": "#7adaa1",
+                    "on-tertiary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "secondary": "#006b56",
+                    "error-container": "#ffdad6",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#f9f9f9",
+                    "on-tertiary-fixed": "#00201a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "unit": "8px",
+                    "gutter": "24px",
+                    "container-max": "1120px",
+                    "margin-desktop": "40px",
+                    "section-gap": "64px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "display": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f9f9f9; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .soft-shadow { box-shadow: 0 10px 30px rgba(31, 111, 95, 0.08); }
+        .active-blob { position: absolute; left: 0; width: 4px; height: 100%; border-radius: 0 4px 4px 0; background-color: #006d41; }
+        .step-transition { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hidden-step { opacity: 0; transform: translateY(20px); pointer-events: none; position: absolute; }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- Side Navigation Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low dark:bg-surface-container-lowest z-50 flex flex-col p-gutter">
+<div class="mb-10 px-4">
+<h1 class="font-headline-md text-headline-md font-semibold text-primary">Nudge</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Breathe deep.</p>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Dashboard (Active because this is the primary focus) -->
+<a class="flex items-center gap-3 bg-primary-container text-on-primary-container rounded-full px-4 py-3 group" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors duration-200 px-4 py-3 rounded-full" href="#">
+<span class="material-symbols-outlined">center_focus_strong</span>
+<span class="font-body-md">Focus Mode</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors duration-200 px-4 py-3 rounded-full" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-body-md">Drafts</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors duration-200 px-4 py-3 rounded-full" href="#">
+<span class="material-symbols-outlined">auto_graph</span>
+<span class="font-body-md">Insights</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant/50 transition-colors duration-200 px-4 py-3 rounded-full" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-gutter border-t border-outline-variant/30">
+<button class="w-full bg-primary text-on-primary font-label-md py-3 rounded-full mb-6 hover:opacity-90 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                Quick Entry
+            </button>
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-primary px-4 py-3" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-body-md">Help</span>
+</a>
+</div>
+</aside>
+<!-- Top App Bar Shell -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-background/80 backdrop-blur-md">
+<div class="flex justify-between items-center h-20 px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="flex items-center gap-4">
+<span class="font-headline-lg text-headline-lg text-primary font-bold">Nudge</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="bg-surface-container border-none rounded-full pl-10 pr-4 py-2 w-64 focus:ring-2 focus:ring-primary/20 text-label-md" placeholder="Search tasks..." type="text"/>
+</div>
+<button class="bg-tertiary-container text-on-tertiary-container px-6 py-2 rounded-full font-label-md hover:opacity-80 transition-all">
+                    Check-in
+                </button>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="material-symbols-outlined hover:text-primary transition-all">notifications_active</button>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a friendly workspace user with soft natural lighting, a blurred minimalist office background, and a warm, inviting expression. The style is bright and airy with high-key lighting to match the soft minimalist brand aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtHEQMEWdq5YwQkiaKYZzmwofDQy4JkrzDVDJfpsBwKtBkaz-9rbN5UCDpSo-qM4kDY2zV0ei8-PlNnZTc2usDNec0j54GdmMACthH7DS40sZiXdxHBQEeO5Kg_jBXoLW6JUuuG0hbhcvbYJH10bKc7JRIf9f75puV7VHqUggcpwjp-Fno8KxaCO9kstY6rvyH5QI5CL_mRsX4SvgOb2S_4z0AMUB_uwfrcKI9cY1Jtp0tYXhsS7dideamAvqI92jxeysPlO-DaiXT"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-64 pt-20 min-h-screen">
+<div class="max-w-container-max mx-auto px-margin-desktop py-section-gap">
+<!-- Bento Dashboard Header (Pre-State) -->
+<div class="step-transition" id="dashboard-view">
+<div class="mb-10">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Morning, Alex.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Let's handle the friction together.</p>
+</div>
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Critical Task Card -->
+<div class="col-span-12 lg:col-span-8 glass-card rounded-lg p-8 soft-shadow relative overflow-hidden">
+<div class="absolute top-0 right-0 p-8">
+<span class="bg-error-container text-on-error-container px-4 py-1 rounded-full text-label-sm">High Priority</span>
+</div>
+<div class="max-w-md">
+<h3 class="font-headline-md text-headline-md mb-4">Q4 Strategy Deck Completion</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 leading-relaxed">
+                                You've been working on this for 3 hours. Sometimes a fresh set of eyes or a little more space is all you need.
+                            </p>
+<div class="flex gap-4">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-full font-label-md soft-shadow hover:scale-[1.02] transition-transform flex items-center gap-2" onclick="startTriage()">
+<span class="material-symbols-outlined">block</span>
+                                    I'm Blocked
+                                </button>
+<button class="border-[1.5px] border-secondary text-secondary px-8 py-4 rounded-full font-label-md hover:bg-secondary-container/20 transition-all">
+                                    Finish Now
+                                </button>
+</div>
+</div>
+<!-- Background decoration -->
+<div class="absolute -bottom-10 -right-10 opacity-10">
+<span class="material-symbols-outlined text-[240px]" style="font-variation-settings: 'wght' 100;">spa</span>
+</div>
+</div>
+<!-- Small Stat Cards -->
+<div class="col-span-12 lg:col-span-4 grid grid-rows-2 gap-gutter">
+<div class="bg-secondary-container rounded-lg p-6 flex flex-col justify-between">
+<span class="material-symbols-outlined text-on-secondary-container text-[32px]">timer</span>
+<div>
+<p class="text-on-secondary-container font-label-sm uppercase tracking-wider">Focus Streak</p>
+<h4 class="text-on-secondary-container font-headline-md">120 Minutes</h4>
+</div>
+</div>
+<div class="bg-tertiary-container rounded-lg p-6 flex flex-col justify-between">
+<span class="material-symbols-outlined text-on-tertiary-container text-[32px]">self_improvement</span>
+<div>
+<p class="text-on-tertiary-container font-label-sm uppercase tracking-wider">Mental Load</p>
+<h4 class="text-on-tertiary-container font-headline-md">Lightened</h4>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Triage Selection Screen (Step 1) -->
+<div class="hidden-step w-full max-w-4xl mx-auto" id="triage-selection">
+<div class="text-center mb-12">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-3">No worries. We've got you.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">What do you need most right now?</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<button class="glass-card p-10 rounded-lg soft-shadow hover:scale-105 hover:bg-white transition-all text-center flex flex-col items-center group" onclick="selectOption('time')">
+<div class="w-16 h-16 bg-primary-container rounded-full flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform">
+<span class="material-symbols-outlined text-on-primary-container text-[32px]">schedule</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-2">Need more time</h4>
+<p class="text-on-surface-variant font-body-md">Push the deadline by 24-48 hours.</p>
+</button>
+<button class="glass-card p-10 rounded-lg soft-shadow hover:scale-105 hover:bg-white transition-all text-center flex flex-col items-center group" onclick="selectOption('help')">
+<div class="w-16 h-16 bg-secondary-container rounded-full flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform">
+<span class="material-symbols-outlined text-on-secondary-container text-[32px]">groups</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-2">Need a coworker</h4>
+<p class="text-on-surface-variant font-body-md">Get input from a teammate today.</p>
+</button>
+<button class="glass-card p-10 rounded-lg soft-shadow hover:scale-105 hover:bg-white transition-all text-center flex flex-col items-center group" onclick="selectOption('waiting')">
+<div class="w-16 h-16 bg-tertiary-container rounded-full flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform">
+<span class="material-symbols-outlined text-on-tertiary-container text-[32px]">hourglass_empty</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-2">Waiting on someone</h4>
+<p class="text-on-surface-variant font-body-md">Gentle nudge for a pending item.</p>
+</button>
+</div>
+<div class="mt-12 text-center">
+<button class="text-on-surface-variant font-label-md hover:text-primary flex items-center justify-center gap-2 mx-auto" onclick="resetUI()">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                        Back to my dashboard
+                    </button>
+</div>
+</div>
+<!-- Email Drafter Screen (Step 2) -->
+<div class="hidden-step w-full max-w-3xl mx-auto" id="email-drafter">
+<div class="mb-8">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Drafted and ready.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Here is a gentle way to ask. Feel free to tweak it.</p>
+</div>
+<div class="bg-surface-container-lowest rounded-lg soft-shadow overflow-hidden border border-outline-variant/20">
+<!-- Email Header -->
+<div class="bg-surface-container p-6 border-b border-outline-variant/30 space-y-4">
+<div class="flex items-center gap-4">
+<span class="font-label-md text-on-surface-variant w-16">To:</span>
+<div class="flex-1 bg-surface-container-lowest rounded-full px-4 py-2 text-label-md flex items-center justify-between">
+<span id="recipient-tag">Sarah Chen (Manager)</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-label-md text-on-surface-variant w-16">Subject:</span>
+<div class="flex-1 bg-surface-container-lowest rounded-full px-4 py-2 text-label-md font-semibold" id="email-subject">
+                                Update on Q4 Strategy Deck
+                            </div>
+</div>
+</div>
+<!-- Email Body -->
+<div class="p-8">
+<textarea class="w-full min-h-[280px] bg-transparent border-none focus:ring-0 font-body-md text-body-md leading-relaxed resize-none p-0" id="email-body" placeholder="Type your message here..."></textarea>
+</div>
+<!-- Footer Actions -->
+<div class="p-6 bg-surface-container-low border-t border-outline-variant/30 flex justify-between items-center">
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-variant transition-all">
+<span class="material-symbols-outlined">format_bold</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-variant transition-all">
+<span class="material-symbols-outlined">link</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-variant transition-all">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2 rounded-full font-label-md text-on-surface-variant hover:text-primary" onclick="selectOption('back')">Cancel</button>
+<button class="bg-primary text-on-primary px-10 py-3 rounded-full font-label-md soft-shadow hover:opacity-90 flex items-center gap-2 group" onclick="sendEmail()">
+<span>Send</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Success Splash (Final Step) -->
+<div class="hidden-step text-center py-20" id="success-state">
+<div class="w-32 h-32 bg-primary-container rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce">
+<span class="material-symbols-outlined text-on-primary-container text-[64px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg mb-4">Request Sent.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-12 max-w-md mx-auto">
+                    The weight is off your shoulders for now. Take a 5-minute breather or move to your next lightest task.
+                </p>
+<button class="bg-secondary text-on-secondary px-10 py-4 rounded-full font-label-md hover:scale-105 transition-all soft-shadow" onclick="resetUI()">
+                    Back to Dashboard
+                </button>
+</div>
+</div>
+</main>
+<script>
+        const views = {
+            dashboard: document.getElementById('dashboard-view'),
+            triage: document.getElementById('triage-selection'),
+            drafter: document.getElementById('email-drafter'),
+            success: document.getElementById('success-state')
+        };
+
+        const emailContent = {
+            time: {
+                subject: "Question regarding Q4 Strategy Deck timeline",
+                body: "Hi Sarah,\n\nI’ve been making good progress on the Q4 Strategy Deck, but I want to ensure the final output is as high-quality as possible. To do that, I’d like to request an additional 24 hours to polish the data visualizations.\n\nWould moving the deadline to Wednesday morning work for you?\n\nBest,\nAlex",
+                recipient: "Sarah Chen (Manager)"
+            },
+            help: {
+                subject: "Quick collaboration on Q4 Strategy Deck?",
+                body: "Hi Jordan,\n\nI’m currently working through the market analysis section of the Q4 Strategy Deck and would value your perspective on the competitive landscape slides.\n\nDo you have 15 minutes this afternoon for a quick sync or to look over my current draft?\n\nThanks!\nAlex",
+                recipient: "Jordan Smith (Teammate)"
+            },
+            waiting: {
+                subject: "Following up: Q3 Revenue Figures for Strategy Deck",
+                body: "Hi Marcus,\n\nI hope your week is going well. I’m currently finalizing the Q4 Strategy Deck and just need those Q3 revenue figures we discussed to complete the performance section.\n\nCould you let me know when you think those might be ready?\n\nCheers,\nAlex",
+                recipient: "Marcus Vance (Finance)"
+            }
+        };
+
+        function startTriage() {
+            showStep('triage');
+        }
+
+        function selectOption(option) {
+            if(option === 'back') {
+                showStep('triage');
+                return;
+            }
+            
+            const draft = emailContent[option];
+            document.getElementById('email-subject').innerText = draft.subject;
+            document.getElementById('email-body').value = draft.body;
+            document.getElementById('recipient-tag').innerText = draft.recipient;
+            
+            showStep('drafter');
+        }
+
+        function sendEmail() {
+            showStep('success');
+        }
+
+        function resetUI() {
+            showStep('dashboard');
+        }
+
+        function showStep(stepName) {
+            Object.keys(views).forEach(key => {
+                if (key === stepName) {
+                    views[key].classList.remove('hidden-step');
+                    views[key].classList.add('relative');
+                } else {
+                    views[key].classList.add('hidden-step');
+                    views[key].classList.remove('relative');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body></html>

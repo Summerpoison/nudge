@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nudge - Task Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .view-transition {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #becabf;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6e7a70;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e2e2e2",
+                        "on-primary-fixed": "#002110",
+                        "surface-container-low": "#f4f3f3",
+                        "surface": "#f9f9f9",
+                        "on-tertiary-fixed-variant": "#005143",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#3e4941",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#2f3131",
+                        "surface-tint": "#006d41",
+                        "surface-container-high": "#e8e8e8",
+                        "primary-fixed": "#95f7bb",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#8cf6d6",
+                        "on-tertiary-container": "#005648",
+                        "surface-container": "#eeeeee",
+                        "on-secondary-fixed": "#002018",
+                        "tertiary": "#186a5a",
+                        "secondary-fixed-dim": "#70d9ba",
+                        "on-secondary-container": "#00725b",
+                        "primary-container": "#6fcf97",
+                        "surface-bright": "#f9f9f9",
+                        "on-surface": "#1a1c1c",
+                        "outline": "#6e7a70",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-primary-fixed-variant": "#005230",
+                        "on-tertiary-fixed": "#00201a",
+                        "inverse-primary": "#7adaa1",
+                        "surface-dim": "#dadada",
+                        "background": "#f9f9f9",
+                        "on-tertiary": "#ffffff",
+                        "secondary": "#006b56",
+                        "primary-fixed-dim": "#7adaa1",
+                        "on-secondary-fixed-variant": "#005140",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1a1c1c",
+                        "outline-variant": "#becabf",
+                        "tertiary-fixed-dim": "#8ad5c1",
+                        "primary": "#006d41",
+                        "surface-variant": "#e2e2e2",
+                        "secondary-container": "#8cf6d6",
+                        "on-primary-container": "#005733",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#a6f1dd",
+                        "tertiary-container": "#80cab7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "40px",
+                        "margin-mobile": "16px",
+                        "container-max": "1120px",
+                        "section-gap": "64px",
+                        "gutter": "24px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- Side Navigation Bar (Anchor) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest dark:bg-surface-dim shadow-[0_10_30px_rgba(31,111,95,0.08)] z-50 transition-all duration-300 ease-in-out">
+<div class="flex flex-col h-full p-margin-desktop gap-unit">
+<!-- Brand Header -->
+<div class="mb-10 px-4">
+<h1 class="font-display text-display text-primary dark:text-primary-fixed mb-1">Nudge</h1>
+<p class="text-on-surface-variant font-body-md">Digital deep breath</p>
+</div>
+<!-- Navigation Items -->
+<nav class="flex-grow space-y-2">
+<a class="flex items-center gap-3 bg-primary-container dark:bg-on-primary-fixed-variant text-on-primary-container dark:text-primary-fixed rounded-full px-4 py-3 transition-all duration-300 ease-in-out hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-body-md">Today</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-300 ease-in-out hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="inbox">inbox</span>
+<span class="font-body-md">Inbox</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-300 ease-in-out hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="folder_open">folder_open</span>
+<span class="font-body-md">Projects</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-300 ease-in-out hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="archive">archive</span>
+<span class="font-body-md">Archive</span>
+</a>
+</nav>
+<!-- Bottom CTA & User -->
+<div class="mt-auto space-y-6">
+<button class="w-full bg-primary-container text-on-primary-container font-label-md py-4 rounded-full shadow-sm hover:shadow-md transition-all active:scale-95">
+                    + New Task
+                </button>
+<div class="flex items-center gap-3 px-4 py-2 border-t border-outline-variant pt-6">
+<img class="w-10 h-10 rounded-full object-cover shadow-sm" data-alt="A professional close-up portrait of a serene woman with a peaceful expression, styled in a soft minimalism aesthetic with natural diffused lighting. The background is a clean, out-of-focus home office with soft greens and whites, reflecting the Nudge brand palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuClFNKkFE2t8r4GSlysrRIuVPo97-imkxYxVrb3qKDQXk9U81abpC1IISZkC083yNPXkBeBPgDyqEmipc4t35TBLllAwGBEpeLGfHEsSsFEJi7JhXcS09uzyJdg0OiptYdXzwir0KGzCUnxmW49Y_tjKIBuOxmkqU2r1p-A_Hu-o5JfQdahZm-U86Lm_w8qbAxO0vXmq6xR7GgSlRoxQvxYB42FnX6tcVqM-tzZFplJbnyvA6G72SX5I6Y3Q9jBmrC5kTHWJziK9XHE"/>
+<div class="overflow-hidden">
+<p class="font-label-md truncate">Elena Vance</p>
+<p class="text-xs text-on-surface-variant truncate">Premium Zen</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 min-h-screen relative">
+<!-- Top App Bar (Anchor) -->
+<header class="fixed top-0 right-0 left-64 h-20 z-40 bg-background/80 backdrop-blur-md">
+<div class="flex justify-between items-center px-margin-desktop h-full max-w-container-max mx-auto">
+<div class="flex items-center gap-6">
+<h2 class="font-headline-md text-headline-md text-primary">Overview</h2>
+<!-- View Switcher -->
+<div class="bg-surface-container p-1 rounded-full flex items-center shadow-inner">
+<button class="px-6 py-1.5 rounded-full text-label-md transition-all duration-300 bg-surface-container-lowest shadow-sm text-primary font-bold" id="listBtn" onclick="toggleView('list')">
+                            List
+                        </button>
+<button class="px-6 py-1.5 rounded-full text-label-md transition-all duration-300 text-on-surface-variant" id="groupBtn" onclick="toggleView('group')">
+                            Group
+                        </button>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined p-2 text-on-surface-variant hover:text-primary transition-colors cursor-pointer" data-icon="notifications">notifications</span>
+<div class="absolute top-2 right-2 w-2 h-2 bg-secondary rounded-full border-2 border-background"></div>
+</div>
+<span class="material-symbols-outlined p-2 text-on-surface-variant hover:text-primary transition-colors cursor-pointer" data-icon="settings">settings</span>
+<button class="bg-primary text-on-primary font-label-md px-6 py-2 rounded-full scale-95 active:scale-90 transition-transform">
+                        Check-in
+                    </button>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="pt-32 pb-20 px-margin-desktop max-w-container-max mx-auto">
+<!-- List View -->
+<div class="view-transition opacity-100 block" id="listView">
+<div class="space-y-4">
+<!-- Task Item 1 -->
+<div class="group flex items-center justify-between p-6 bg-surface-container-lowest rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_10px_30px_rgba(31,111,95,0.08)] transition-all duration-300 border border-transparent hover:border-primary/10">
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center group-hover:border-primary transition-colors cursor-pointer">
+<div class="w-3 h-3 rounded-full bg-primary opacity-0 group-hover:opacity-20"></div>
+</div>
+<div>
+<h3 class="font-headline-md text-on-surface">Quarterly Report</h3>
+<p class="text-sm text-on-surface-variant mt-1">Due in 2 days • Finalize projections</p>
+</div>
+</div>
+<span class="px-4 py-1.5 rounded-full bg-primary/10 text-primary text-label-sm">Work</span>
+</div>
+<!-- Task Item 2 -->
+<div class="group flex items-center justify-between p-6 bg-surface-container-lowest rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_10px_30px_rgba(31,111,95,0.08)] transition-all duration-300 border border-transparent hover:border-primary/10">
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center group-hover:border-primary transition-colors cursor-pointer">
+<div class="w-3 h-3 rounded-full bg-primary opacity-0 group-hover:opacity-20"></div>
+</div>
+<div>
+<h3 class="font-headline-md text-on-surface">Email Team</h3>
+<p class="text-sm text-on-surface-variant mt-1">Updates on sprint cycle 4</p>
+</div>
+</div>
+<span class="px-4 py-1.5 rounded-full bg-secondary/10 text-secondary text-label-sm">Communication</span>
+</div>
+<!-- Task Item 3 -->
+<div class="group flex items-center justify-between p-6 bg-surface-container-lowest rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_10px_30px_rgba(31,111,95,0.08)] transition-all duration-300 border border-transparent hover:border-primary/10">
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center group-hover:border-primary transition-colors cursor-pointer">
+<div class="w-3 h-3 rounded-full bg-primary opacity-0 group-hover:opacity-20"></div>
+</div>
+<div>
+<h3 class="font-headline-md text-on-surface">Research New Tools</h3>
+<p class="text-sm text-on-surface-variant mt-1">AI-driven project management exploration</p>
+</div>
+</div>
+<span class="px-4 py-1.5 rounded-full bg-tertiary/10 text-tertiary text-label-sm">Exploration</span>
+</div>
+<!-- Task Item 4 -->
+<div class="group flex items-center justify-between p-6 bg-surface-container-lowest rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_10px_30px_rgba(31,111,95,0.08)] transition-all duration-300 border border-transparent hover:border-primary/10">
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center group-hover:border-primary transition-colors cursor-pointer">
+<div class="w-3 h-3 rounded-full bg-primary opacity-0 group-hover:opacity-20"></div>
+</div>
+<div>
+<h3 class="font-headline-md text-on-surface">Daily Meditation</h3>
+<p class="text-sm text-on-surface-variant mt-1">10 minutes session at 4:00 PM</p>
+</div>
+</div>
+<span class="px-4 py-1.5 rounded-full bg-primary-container/20 text-on-primary-container text-label-sm">Self-care</span>
+</div>
+</div>
+</div>
+<!-- Focus View (Eisenhower Matrix) -->
+<div class="view-transition opacity-0 hidden" id="groupView">
+<div class="matrix-grid min-h-[600px]">
+<!-- Quadrant 1: Do First -->
+<div class="glass-card rounded-2xl p-8 flex flex-col gap-6">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-error"></div>
+<h3 class="font-headline-md text-on-surface">Do First</h3>
+<span class="ml-auto text-xs font-label-sm text-on-surface-variant uppercase tracking-widest">Important &amp; Urgent</span>
+</div>
+<div class="space-y-4 flex-grow">
+<div class="p-4 bg-white/50 rounded-xl border border-error/10 hover:shadow-sm transition-shadow">
+<p class="font-label-md text-on-surface">Quarterly Report</p>
+<p class="text-xs text-on-surface-variant mt-1 italic">Due in 2 days</p>
+</div>
+</div>
+<button class="text-primary text-label-sm flex items-center gap-2 hover:translate-x-1 transition-transform">
+<span class="material-symbols-outlined !text-[18px]" data-icon="add">add</span> Add urgent task
+                        </button>
+</div>
+<!-- Quadrant 2: Schedule -->
+<div class="glass-card rounded-2xl p-8 flex flex-col gap-6">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<h3 class="font-headline-md text-on-surface">Schedule</h3>
+<span class="ml-auto text-xs font-label-sm text-on-surface-variant uppercase tracking-widest">Important / Not Urgent</span>
+</div>
+<div class="space-y-4 flex-grow">
+<div class="p-4 bg-white/50 rounded-xl border border-primary/10 hover:shadow-sm transition-shadow">
+<p class="font-label-md text-on-surface">Daily Meditation</p>
+<p class="text-xs text-on-surface-variant mt-1">16:00 Daily Habit</p>
+</div>
+<div class="p-4 bg-white/50 rounded-xl border border-primary/10 hover:shadow-sm transition-shadow">
+<p class="font-label-md text-on-surface">Research New Tools</p>
+<p class="text-xs text-on-surface-variant mt-1">Strategic focus for Q3</p>
+</div>
+</div>
+<button class="text-primary text-label-sm flex items-center gap-2 hover:translate-x-1 transition-transform">
+<span class="material-symbols-outlined !text-[18px]" data-icon="add">add</span> Add long-term goal
+                        </button>
+</div>
+<!-- Quadrant 3: Delegate -->
+<div class="glass-card rounded-2xl p-8 flex flex-col gap-6">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<h3 class="font-headline-md text-on-surface">Delegate</h3>
+<span class="ml-auto text-xs font-label-sm text-on-surface-variant uppercase tracking-widest">Urgent / Not Important</span>
+</div>
+<div class="space-y-4 flex-grow">
+<div class="p-4 bg-white/50 rounded-xl border border-secondary/10 hover:shadow-sm transition-shadow">
+<p class="font-label-md text-on-surface">Email Team</p>
+<p class="text-xs text-on-surface-variant mt-1">Can be handled by admin</p>
+</div>
+</div>
+<button class="text-primary text-label-sm flex items-center gap-2 hover:translate-x-1 transition-transform">
+<span class="material-symbols-outlined !text-[18px]" data-icon="add">add</span> Delegate task
+                        </button>
+</div>
+<!-- Quadrant 4: Don't Do -->
+<div class="glass-card rounded-2xl p-8 flex flex-col gap-6 opacity-60">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-outline"></div>
+<h3 class="font-headline-md text-on-surface">Don't Do</h3>
+<span class="ml-auto text-xs font-label-sm text-on-surface-variant uppercase tracking-widest">Eliminate</span>
+</div>
+<div class="flex-grow flex flex-col items-center justify-center text-center p-4">
+<span class="material-symbols-outlined text-outline-variant text-4xl mb-2" data-icon="energy_savings_leaf">energy_savings_leaf</span>
+<p class="text-sm text-on-surface-variant">Your space is clean. No distracting tasks here.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Atmospheric Background Element -->
+<div class="fixed top-0 right-0 -z-10 w-full h-full pointer-events-none opacity-40">
+<div class="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-primary/5 blur-[120px]"></div>
+<div class="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-secondary/5 blur-[100px]"></div>
+</div>
+</main>
+<script>
+        function toggleView(view) {
+            const listBtn = document.getElementById('listBtn');
+            const groupBtn = document.getElementById('groupBtn');
+            const listView = document.getElementById('listView');
+            const groupView = document.getElementById('groupView');
+
+            if (view === 'list') {
+                // UI Toggle Buttons
+                listBtn.classList.add('bg-surface-container-lowest', 'shadow-sm', 'text-primary', 'font-bold');
+                listBtn.classList.remove('text-on-surface-variant');
+                groupBtn.classList.remove('bg-surface-container-lowest', 'shadow-sm', 'text-primary', 'font-bold');
+                groupBtn.classList.add('text-on-surface-variant');
+
+                // Content Transition
+                groupView.classList.add('opacity-0');
+                setTimeout(() => {
+                    groupView.classList.add('hidden');
+                    listView.classList.remove('hidden');
+                    setTimeout(() => listView.classList.remove('opacity-0'), 50);
+                }, 300);
+
+            } else {
+                // UI Toggle Buttons
+                groupBtn.classList.add('bg-surface-container-lowest', 'shadow-sm', 'text-primary', 'font-bold');
+                groupBtn.classList.remove('text-on-surface-variant');
+                listBtn.classList.remove('bg-surface-container-lowest', 'shadow-sm', 'text-primary', 'font-bold');
+                listBtn.classList.add('text-on-surface-variant');
+
+                // Content Transition
+                listView.classList.add('opacity-0');
+                setTimeout(() => {
+                    listView.classList.add('hidden');
+                    groupView.classList.remove('hidden');
+                    setTimeout(() => groupView.classList.remove('opacity-0'), 50);
+                }, 300);
+            }
+        }
+    </script>
+</body></html>
