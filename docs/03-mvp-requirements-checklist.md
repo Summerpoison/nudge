@@ -8,34 +8,34 @@
 
 ## CHKP — Checkpoint & Task-System (Teil B, Kern-App)
 
-- [ ] **CHKP-FUNC-001** (Must) — Beim Anlegen eines Tasks MUSS der Nutzer folgende Felder angeben: Task-Name, externes Deadline. Buffer-Deadline und Checkpoints (50%/75%) werden automatisch berechnet, sind aber überschreibbar.
-- [ ] **CHKP-FUNC-002** (Must) — Die Buffer-Deadline wird berechnet als `task_creation_date + 0.7 × (external_deadline − task_creation_date)`. *(Aufgelöst in RE-Audit 3.2 — Bezugsgröße ist das Erstellungsdatum, nicht "heute".)*
-- [ ] **CHKP-FUNC-003** (Must) — Checkpoint 1 liegt bei 50%, Checkpoint 2 bei 75% der verfügbaren Zeit (Default, überschreibbar).
-- [ ] **CHKP-FUNC-004** (Must) — Bei Checkpoint-Fälligkeit MUSS das System eine Nutzerinteraktion erfordern: entweder Artefakt-Einreichung (beliebiges Level: Strong/Medium/Minimal) ODER Triage-Auswahl (A/B/C/D). Ein reines Abhaken ohne eine der beiden Formen ist nicht zulässig. *(Aufgelöst in RE-Audit 3.1.)*
-- [ ] **CHKP-FUNC-005** (Must) — Der Nutzer wird NICHT am Fortfahren gehindert, sobald eine der beiden Interaktionsformen aus CHKP-FUNC-004 abgeschlossen ist. Kein Blocking-Zustand im UI.
-- [ ] **CHKP-FUNC-006** (Must) — Blocker-Triage bietet exakt vier Optionen (A: Sprint starten, B: Stuck/Hilfe nötig, C: Warte auf jemanden, D: Scope/Deadline-Problem), kein Freitext als Ersatz.
-- [ ] **CHKP-FUNC-007** (Must) — Bei Triage-Option B, C oder D generiert das System einen vorausgefüllten Nachrichtenentwurf (Empfänger, Betreff, Text), den der Nutzer vor dem Versand bearbeiten kann.
-- [ ] **CHKP-FUNC-008** (Must) — Der Versand des Entwurfs erfolgt über einen `mailto:`-Link (Standard-Mailprogramm des Nutzers), NICHT über einen im Tool integrierten Versand. Kein E-Mail-Konto-Login erforderlich für diesen Pfad.
-- [ ] **CHKP-FUNC-009** (Must) — Nach Klick auf "Send" wird der betroffene Task optimistisch auf Status "On Hold" gesetzt (lokale Zustandsänderung, unabhängig vom tatsächlichen Mail-Versand).
-- [ ] **CHKP-FUNC-010** (Should) — Der Nutzer kann einen "On Hold"-Task manuell wieder auf "aktiv" setzen. Kein automatisches Reply-Tracking für diesen Pfad (siehe REVIEW-Modul für den einzigen Pfad mit automatischem Tracking).
-- [ ] **CHKP-FUNC-011** (Must) — Dashboard zeigt alle offenen Tasks mit Checkpoint-Datum und Status in einer Übersicht.
-- [ ] **CHKP-FUNC-012** (Must) — Task-Detail-Ansicht zeigt Historie, aktuellen Status und Ort für Artefakt-Einreichung für einen einzelnen Task.
-- [ ] **CHKP-NFR-001** (Must) — Kein im System gespeichertes "Inbox"- oder "Drafts"-Objekt mit eigenem Lifecycle. Entwürfe sind Wegwerf-Artefakte (siehe `01-communication-architecture.md`).
+- [x] **CHKP-FUNC-001** (Must) — Beim Anlegen eines Tasks MUSS der Nutzer folgende Felder angeben: Task-Name, externes Deadline. Buffer-Deadline und Checkpoints (50%/75%) werden automatisch berechnet, sind aber überschreibbar. *(Schritt 2)*
+- [x] **CHKP-FUNC-002** (Must) — Die Buffer-Deadline wird berechnet als `task_creation_date + 0.7 × (external_deadline − task_creation_date)`. *(Aufgelöst in RE-Audit 3.2 — Bezugsgröße ist das Erstellungsdatum, nicht "heute". Schritt 2.)*
+- [x] **CHKP-FUNC-003** (Must) — Checkpoint 1 liegt bei 50%, Checkpoint 2 bei 75% der verfügbaren Zeit (Default, überschreibbar). *(Schritt 2 — "verfügbare Zeit" als Buffer-Fenster ausgelegt, siehe `05-step2-task-model.md`.)*
+- [x] **CHKP-FUNC-004** (Must) — Bei Checkpoint-Fälligkeit MUSS das System eine Nutzerinteraktion erfordern: entweder Artefakt-Einreichung (beliebiges Level: Strong/Medium/Minimal) ODER Triage-Auswahl (A/B/C/D). Ein reines Abhaken ohne eine der beiden Formen ist nicht zulässig. *(Aufgelöst in RE-Audit 3.1. Schritt 4.)*
+- [x] **CHKP-FUNC-005** (Must) — Der Nutzer wird NICHT am Fortfahren gehindert, sobald eine der beiden Interaktionsformen aus CHKP-FUNC-004 abgeschlossen ist. Kein Blocking-Zustand im UI. *(Schritt 4 — Check-in-Button immer erreichbar, nur visuell hervorgehoben.)*
+- [x] **CHKP-FUNC-006** (Must) — Blocker-Triage bietet exakt vier Optionen (A: Sprint starten, B: Stuck/Hilfe nötig, C: Warte auf jemanden, D: Scope/Deadline-Problem), kein Freitext als Ersatz. *(Schritt 4.)*
+- [x] **CHKP-FUNC-007** (Must) — Bei Triage-Option B, C oder D generiert das System einen vorausgefüllten Nachrichtenentwurf (Empfänger, Betreff, Text), den der Nutzer vor dem Versand bearbeiten kann. *(Schritt 4.)*
+- [x] **CHKP-FUNC-008** (Must) — Der Versand des Entwurfs erfolgt über einen `mailto:`-Link (Standard-Mailprogramm des Nutzers), NICHT über einen im Tool integrierten Versand. Kein E-Mail-Konto-Login erforderlich für diesen Pfad. *(Schritt 4.)*
+- [x] **CHKP-FUNC-009** (Must) — Nach Klick auf "Send" wird der betroffene Task optimistisch auf Status "On Hold" gesetzt (lokale Zustandsänderung, unabhängig vom tatsächlichen Mail-Versand). *(Schritt 4.)*
+- [x] **CHKP-FUNC-010** (Should) — Der Nutzer kann einen "On Hold"-Task manuell wieder auf "aktiv" setzen. Kein automatisches Reply-Tracking für diesen Pfad (siehe REVIEW-Modul für den einzigen Pfad mit automatischem Tracking). *(Schritt 3.)*
+- [x] **CHKP-FUNC-011** (Must) — Dashboard zeigt alle offenen Tasks mit Checkpoint-Datum und Status in einer Übersicht. *(Schritt 3.)*
+- [x] **CHKP-FUNC-012** (Must) — Task-Detail-Ansicht zeigt Historie, aktuellen Status und Ort für Artefakt-Einreichung für einen einzelnen Task. *(Schritt 3.)*
+- [x] **CHKP-NFR-001** (Must) — Kein im System gespeichertes "Inbox"- oder "Drafts"-Objekt mit eigenem Lifecycle. Entwürfe sind Wegwerf-Artefakte (siehe `01-communication-architecture.md`).
 - [ ] **CHKP-NFR-002** (Won't, MVP) — Keine Kontakt-/Mitbearbeiter-Verwaltung, keine Zuständigkeiten-Zuweisung im Tool.
 
 ## REVIEW — Weekly Review Loop (Teil C, Notification-Worker)
 
-- [ ] **REVIEW-FUNC-001** (Must) — Der Notification-Worker läuft als eigenständiger, unabhängig startbarer Prozess (separater OS-Prozess, kein Modul im Kern-App-Prozess).
-- [ ] **REVIEW-FUNC-002** (Must) — Der Worker fragt periodisch (Cron-Trigger) per REST-Polling die Kern-App-API nach offenen Fokus-Tasks ab.
-- [ ] **REVIEW-FUNC-003** (Must) — Der Worker verschickt eine E-Mail mit allen offenen Tasks (Checkpoint-Datum, Status), einer eindeutigen Referenz (Message-ID oder Task-IDs im Betreff) zur späteren Zuordnung der Antwort.
-- [ ] **REVIEW-FUNC-004** (Must) — Der Worker fragt per IMAP NUR nach Antworten auf den referenzierten Thread ab (kein genereller Inbox-Zugriff/keine generische Inbox-UI).
-- [ ] **REVIEW-FUNC-005** (Must) — Die Antwort-Mail wird regelbasiert geparst (Task-IDs/Zeilen-Matching, kein KI-Modell in der MVP-Basisversion), um die Top-3-Priorität zu extrahieren.
-- [ ] **REVIEW-FUNC-006** (Must) — Die extrahierte Priorisierung wird per REST-Call an die Kern-App zurückgespielt und dort als "Fokus-Tasks der Woche" markiert.
+- [x] **REVIEW-FUNC-001** (Must) — Der Notification-Worker läuft als eigenständiger, unabhängig startbarer Prozess (separater OS-Prozess, kein Modul im Kern-App-Prozess). *(Schritt 5.)*
+- [x] **REVIEW-FUNC-002** (Must) — Der Worker fragt periodisch (Cron-Trigger) per REST-Polling die Kern-App-API nach offenen Fokus-Tasks ab. *(Schritt 5 — pollt aktuell alle aktiven Tasks, da der Fokus-Task-Begriff erst mit REVIEW-FUNC-006 entsteht, siehe `08-step5-notification-worker-skeleton.md`.)*
+- [x] **REVIEW-FUNC-003** (Must) — Der Worker verschickt eine E-Mail mit allen offenen Tasks (Checkpoint-Datum, Status), einer eindeutigen Referenz (Message-ID oder Task-IDs im Betreff) zur späteren Zuordnung der Antwort. *(Schritt 6.)*
+- [x] **REVIEW-FUNC-004** (Must) — Der Worker fragt per IMAP NUR nach Antworten auf den referenzierten Thread ab (kein genereller Inbox-Zugriff/keine generische Inbox-UI). *(Schritt 7 — per `poplib` statt `imaplib`, da Mailpit keinen IMAP-Server anbietet; mit Nutzerin abgestimmt, siehe `10-step7-reply-parsing.md`.)*
+- [x] **REVIEW-FUNC-005** (Must) — Die Antwort-Mail wird regelbasiert geparst (Task-IDs/Zeilen-Matching, kein KI-Modell in der MVP-Basisversion), um die Top-3-Priorität zu extrahieren. *(Schritt 7.)*
+- [x] **REVIEW-FUNC-006** (Must) — Die extrahierte Priorisierung wird per REST-Call an die Kern-App zurückgespielt und dort als "Fokus-Tasks der Woche" markiert. *(Schritt 8.)*
 - [ ] **REVIEW-FUNC-007** (Should) — Fällige Checkpoint-Reminder für Fokus-Tasks werden gebündelt (ein täglicher Digest statt Einzel-Reminder pro Task).
 - [ ] **REVIEW-FUNC-008** (Must) — Reminder/aktive Benachrichtigungen beziehen sich AUSSCHLIESSLICH auf die aktuell committeten Fokus-Tasks, nicht auf alle Tasks im System.
 - [ ] **REVIEW-FUNC-009** (Should) — Sind alle Fokus-Tasks vor Zyklusende erledigt, bietet das System eine vorzeitige Neu-Priorisierung an, erzwingt sie aber nicht.
-- [ ] **REVIEW-NFR-001** (Must) — Der Worker nutzt für SMTP/IMAP ausschließlich Python-Standardbibliothek (`smtplib`, `imaplib`) — keine externen E-Mail-Abhängigkeiten.
-- [ ] **REVIEW-NFR-002** (Must) — Kern-App und Worker sind unabhängig voneinander lauffähig: Ausfall eines Prozesses darf den anderen nicht zum Absturz bringen (nachgewiesen durch manuellen Test, siehe `00-tooling-and-process-independence.md`).
+- [x] **REVIEW-NFR-001** (Must) — Der Worker nutzt für SMTP/IMAP ausschließlich Python-Standardbibliothek (`smtplib`, `imaplib`) — keine externen E-Mail-Abhängigkeiten. *(`smtplib` wie spezifiziert; für den Empfang `poplib` statt `imaplib` — ebenfalls Standardbibliothek, siehe REVIEW-FUNC-004-Anmerkung. Keine externe Abhängigkeit in beiden Fällen.)*
+- [ ] **REVIEW-NFR-002** (Must) — Kern-App und Worker sind unabhängig voneinander lauffähig: Ausfall eines Prozesses darf den anderen nicht zum Absturz bringen (nachgewiesen durch manuellen Test, siehe `00-tooling-and-process-independence.md`). *(Mechanismus bereits in Schritt 5 informell verifiziert; formaler Nachweis mit Screenshot/GIF folgt in Schritt 9.)*
 
 ## ESC — Eisenhower-Filter & Eskalation (Teil C, Erweiterung)
 

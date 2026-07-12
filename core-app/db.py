@@ -22,7 +22,8 @@ def init_db():
             buffer_deadline TEXT NOT NULL,
             checkpoint_1 TEXT NOT NULL,
             checkpoint_2 TEXT NOT NULL,
-            status TEXT NOT NULL DEFAULT 'active'
+            status TEXT NOT NULL DEFAULT 'active',
+            is_focus_task INTEGER NOT NULL DEFAULT 0
         )
         """
     )

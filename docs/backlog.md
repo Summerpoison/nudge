@@ -23,3 +23,5 @@ Sammelstelle für Punkte, die während des Baus aufkamen, aber bewusst nicht in 
 - [ ] **ESC-FUNC-006** (Could) — Pro-Task individualisierbare Urgent-Schwellenwerte, statt nur eines globalen Default-Werts.
 
 - [ ] **ESC-FUNC-007** (Could) — Live-Neuberechnung des Eisenhower-Quadranten bei jedem App-Öffnen statt nur im täglichen Cron-Durchlauf.
+
+- [ ] **Dashboard-Sortierung nach Fokus-Tasks** statt nur nach frühester Buffer-Deadline. Aufgeworfen nach Schritt 8 (`is_focus_task` existiert jetzt) — aktuell nur als Badge sichtbar, beeinflusst die Reihenfolge auf Dashboard/All-Tasks nicht. Siehe `11-step8-focus-task-writeback.md`.

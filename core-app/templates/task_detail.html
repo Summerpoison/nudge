@@ -10,9 +10,17 @@
         <section class="bg-surface rounded-xl p-8">
             <div class="flex items-start justify-between mb-6">
                 <h2 class="font-display font-bold text-2xl">{{ task.name }}</h2>
-                <span class="text-xs uppercase tracking-wide px-3 py-1 rounded-full bg-primary/30">
-                    {{ task.status.replace('_', ' ') }}
-                </span>
+                <div class="flex items-center gap-2">
+                    {% if task.is_focus_task %}
+                    <span class="text-xs uppercase tracking-wide px-3 py-1 rounded-full bg-accent text-white flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">flag</span>
+                        Focus
+                    </span>
+                    {% endif %}
+                    <span class="text-xs uppercase tracking-wide px-3 py-1 rounded-full bg-primary/30">
+                        {{ task.status.replace('_', ' ') }}
+                    </span>
+                </div>
             </div>
 
             {% if task.status == 'active' %}

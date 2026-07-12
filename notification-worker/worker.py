@@ -56,6 +56,22 @@ def fetch_open_tasks() -> list[dict] | None:
     return [task for task in tasks if task["status"] == "active"]
 
 
+def post_focus_tasks(task_ids: list[int]) -> None:
+    url = f"{CORE_APP_URL}/api/tasks/focus"
+    payload = json.dumps({"task_ids": task_ids}).encode("utf-8")
+    request_obj = urllib.request.Request(
+        url, data=payload, headers={"Content-Type": "application/json"}, method="POST"
+    )
+    try:
+        with urllib.request.urlopen(request_obj, timeout=5) as response:
+            result = json.loads(response.read())
+    except urllib.error.URLError as error:
+        log(f"Could not post focus tasks to core-app at {url}: {error}")
+        return
+
+    log(f"Marked focus tasks for this week: {result['focus_task_ids']}")
+
+
 def format_date(value: str) -> str:
     return datetime.fromisoformat(value).strftime("%b %d, %Y %I:%M %p")
 
@@ -179,6 +195,7 @@ def check_for_replies() -> None:
 
             if priorities:
                 log(f"Reply to '{subject}' parsed top priorities: {priorities}")
+                post_focus_tasks(priorities)
             else:
                 log(f"Reply to '{subject}' matched but no valid task IDs found in the body")
     finally:

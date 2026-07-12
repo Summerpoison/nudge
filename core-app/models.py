@@ -113,3 +113,19 @@ def is_checkpoint_due(task: dict) -> bool:
     checkpoint_1 = datetime.fromisoformat(task["checkpoint_1"])
     checkpoint_2 = datetime.fromisoformat(task["checkpoint_2"])
     return now >= checkpoint_1 or now >= checkpoint_2
+
+
+def set_focus_tasks(task_ids: list[int]) -> list[int]:
+    conn = get_connection()
+    conn.execute("UPDATE tasks SET is_focus_task = 0")
+
+    applied: list[int] = []
+    if task_ids:
+        placeholders = ",".join("?" * len(task_ids))
+        rows = conn.execute(f"SELECT id FROM tasks WHERE id IN ({placeholders})", task_ids).fetchall()
+        applied = [row["id"] for row in rows]
+        conn.execute(f"UPDATE tasks SET is_focus_task = 1 WHERE id IN ({placeholders})", task_ids)
+
+    conn.commit()
+    conn.close()
+    return applied

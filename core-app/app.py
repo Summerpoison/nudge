@@ -12,6 +12,7 @@ from models import (
     get_task,
     get_task_events,
     is_checkpoint_due,
+    set_focus_tasks,
     update_task_status,
 )
 from uploads import delete_attachment, list_attachments, save_attachment, task_upload_dir
@@ -175,6 +176,16 @@ def api_get_task(task_id):
     if task is None:
         return jsonify(error="not found"), 404
     return jsonify(task)
+
+
+@app.route("/api/tasks/focus", methods=["POST"])
+def api_set_focus_tasks():
+    data = request.get_json()
+    task_ids = data["task_ids"]
+    applied = set_focus_tasks(task_ids)
+    for task_id in applied:
+        add_task_event(task_id, "marked_focus_task", "Marked as a focus task for this week")
+    return jsonify(focus_task_ids=applied)
 
 
 if __name__ == "__main__":
