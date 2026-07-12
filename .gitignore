@@ -22,6 +22,9 @@ instance/
 *.db
 *.sqlite3
 
+# User-uploaded task artifacts
+core-app/uploads/
+
 # Logs
 *.log
 

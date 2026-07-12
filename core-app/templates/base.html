@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Nudge{% endblock %}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@700;800&family=Inter:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<style>
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        vertical-align: middle;
+    }
+</style>
+<script id="tailwind-config">
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    background: '#EEEEEE',
+                    surface: '#FFFFFF',
+                    primary: '#6FCF97',
+                    accent: '#2FA084',
+                    text: '#1F6F5F',
+                },
+                fontFamily: {
+                    display: ['Lexend', 'sans-serif'],
+                    body: ['Inter', 'sans-serif'],
+                },
+            },
+        },
+    }
+</script>
+</head>
+<body class="bg-background text-text font-body min-h-screen flex">
+<aside class="w-56 fixed left-0 top-0 h-screen bg-surface border-r border-black/10 flex flex-col p-6">
+    <h1 class="font-display font-extrabold text-2xl mb-10">Nudge</h1>
+    <nav class="flex flex-col gap-1">
+        <a href="{{ url_for('dashboard') }}"
+           class="px-3 py-2 rounded-lg font-medium {{ 'bg-primary/30' if request.path == url_for('dashboard') else 'hover:bg-primary/10' }}">
+            Dashboard
+        </a>
+        <a href="{{ url_for('all_tasks') }}"
+           class="px-3 py-2 rounded-lg font-medium {{ 'bg-primary/30' if request.path == url_for('all_tasks') else 'hover:bg-primary/10' }}">
+            All Tasks
+        </a>
+        <a href="#" class="px-3 py-2 rounded-lg font-medium text-text/40 cursor-not-allowed">
+            Settings
+        </a>
+    </nav>
+</aside>
+<main class="ml-56 flex-1 p-10">
+    {% block content %}{% endblock %}
+</main>
+</body>
+</html>

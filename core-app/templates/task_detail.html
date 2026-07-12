@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}{{ task.name }} | Nudge{% endblock %}
+{% block content %}
+<a href="{{ url_for('all_tasks') }}" class="text-sm text-text/60 hover:text-text mb-6 inline-block">
+    &larr; Back to All Tasks
+</a>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 flex flex-col gap-6">
+        <section class="bg-surface rounded-xl p-8">
+            <div class="flex items-start justify-between mb-6">
+                <h2 class="font-display font-bold text-2xl">{{ task.name }}</h2>
+                <span class="text-xs uppercase tracking-wide px-3 py-1 rounded-full bg-primary/30">
+                    {{ task.status.replace('_', ' ') }}
+                </span>
+            </div>
+
+            <dl class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <dt class="uppercase text-xs tracking-wide font-semibold text-text/70 mb-1">External deadline</dt>
+                    <dd class="text-sm font-medium text-text">{{ task.external_deadline|friendly_date }}</dd>
+                </div>
+                <div>
+                    <dt class="uppercase text-xs tracking-wide font-semibold text-text/70 mb-1">Buffer deadline</dt>
+                    <dd class="text-sm font-medium text-text">{{ task.buffer_deadline|friendly_date }}</dd>
+                </div>
+                <div>
+                    <dt class="uppercase text-xs tracking-wide font-semibold text-text/70 mb-1">Checkpoint 1 (50%)</dt>
+                    <dd class="text-sm font-medium text-text">{{ task.checkpoint_1|friendly_date }}</dd>
+                </div>
+                <div>
+                    <dt class="uppercase text-xs tracking-wide font-semibold text-text/70 mb-1">Checkpoint 2 (75%)</dt>
+                    <dd class="text-sm font-medium text-text">{{ task.checkpoint_2|friendly_date }}</dd>
+                </div>
+            </dl>
+
+            <div>
+                <div class="flex justify-between text-xs uppercase tracking-wide text-text/60 mb-1">
+                    <span>Buffer progress</span>
+                    <span>{{ buffer_pct }}%</span>
+                </div>
+                <div class="h-2 w-full bg-black/10 rounded-full overflow-hidden">
+                    <div class="h-full bg-accent rounded-full" style="width: {{ buffer_pct }}%;"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-surface rounded-xl p-8">
+            <h3 class="font-display font-semibold text-lg mb-4">Activity</h3>
+            <div class="flex flex-col gap-3 text-sm">
+                <div><span class="text-text/50">{{ task.created_at|friendly_date }}</span> &mdash; Task created</div>
+                {% for event in events %}
+                <div><span class="text-text/50">{{ event.created_at|friendly_date }}</span> &mdash; {{ event.description }}</div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <div class="flex flex-col gap-6">
+        <section class="bg-surface rounded-xl p-6">
+            <h3 class="font-display font-semibold text-base mb-4">Status</h3>
+            {% if task.status == 'on_hold' %}
+            <p class="text-sm text-text/60 mb-4">This task is on hold.</p>
+            <form method="post" action="{{ url_for('change_status', task_id=task.id) }}">
+                <input type="hidden" name="status" value="active">
+                <button type="submit" class="w-full bg-accent text-white font-semibold py-2 rounded-lg">
+                    Resume Task
+                </button>
+            </form>
+            {% elif task.status == 'active' %}
+            <form method="post" action="{{ url_for('change_status', task_id=task.id) }}">
+                <input type="hidden" name="status" value="done">
+                <button type="submit" class="w-full bg-accent text-white font-semibold py-2 rounded-lg">
+                    Mark Complete
+                </button>
+            </form>
+            {% elif task.status == 'done' %}
+            <p class="text-sm text-text/60 mb-4">Marked complete.</p>
+            <form method="post" action="{{ url_for('change_status', task_id=task.id) }}">
+                <input type="hidden" name="status" value="active">
+                <button type="submit" class="w-full border border-accent text-accent font-semibold py-2 rounded-lg">
+                    Reopen Task
+                </button>
+            </form>
+            {% endif %}
+        </section>
+
+        <section class="bg-surface rounded-xl p-6">
+            <h3 class="font-display font-semibold text-base mb-4">Attachments</h3>
+            <ul class="flex flex-col gap-2 mb-4 text-sm">
+                {% for filename in attachments %}
+                <li class="flex items-center justify-between gap-2">
+                    <a href="{{ url_for('view_attachment', task_id=task.id, filename=filename) }}"
+                       target="_blank" class="text-accent hover:underline truncate">{{ filename }}</a>
+                    <form method="post"
+                          action="{{ url_for('delete_attachment_route', task_id=task.id, filename=filename) }}">
+                        <button type="submit" class="text-text/40 hover:text-red-600 flex items-center" title="Delete">
+                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                        </button>
+                    </form>
+                </li>
+                {% else %}
+                <li class="text-text/50">No files yet.</li>
+                {% endfor %}
+            </ul>
+            <form method="post" action="{{ url_for('upload_attachment', task_id=task.id) }}"
+                  enctype="multipart/form-data" class="flex flex-col gap-3">
+                <label for="artifact-input"
+                       class="flex items-center justify-center gap-2 border border-accent text-accent font-semibold py-2 rounded-lg cursor-pointer hover:bg-accent/5 transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">upload_file</span>
+                    <span id="artifact-label-text">Choose File</span>
+                </label>
+                <input type="file" name="artifact" id="artifact-input" required class="hidden">
+                <button type="submit" class="bg-accent text-white font-semibold py-2 rounded-lg">
+                    Submit Proof
+                </button>
+            </form>
+        </section>
+    </div>
+</div>
+<script>
+    const artifactInput = document.getElementById('artifact-input');
+    const artifactLabelText = document.getElementById('artifact-label-text');
+    artifactInput.addEventListener('change', () => {
+        if (artifactInput.files.length) {
+            artifactLabelText.textContent = artifactInput.files[0].name;
+        }
+    });
+</script>
+{% endblock %}

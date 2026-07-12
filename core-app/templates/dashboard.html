@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Nudge{% endblock %}
+{% block content %}
+<h2 class="font-display font-bold text-3xl mb-8">Dashboard</h2>
+
+{% if next_task %}
+<section class="bg-surface rounded-xl p-8 mb-10 max-w-2xl">
+    <p class="text-xs uppercase tracking-widest text-text/60 mb-2">Next up</p>
+    <h3 class="font-display font-bold text-2xl mb-4">{{ next_task.name }}</h3>
+    <p class="text-text/70 mb-6">
+        Checkpoint due {{ next_task.checkpoint_1|friendly_date }}
+    </p>
+    <a href="{{ url_for('task_detail', task_id=next_task.id) }}"
+       class="inline-block bg-accent text-white font-semibold px-6 py-3 rounded-lg">
+        View task
+    </a>
+</section>
+{% else %}
+<p class="text-text/60 mb-10">No active tasks yet. Add one from All Tasks.</p>
+{% endif %}
+
+<section>
+    <h3 class="font-display font-semibold text-lg mb-4">Other open tasks</h3>
+    <div class="flex flex-col gap-3 max-w-2xl">
+        {% for task in other_tasks %}
+        <a href="{{ url_for('task_detail', task_id=task.id) }}"
+           class="flex justify-between items-center bg-surface rounded-lg px-5 py-4 hover:shadow-sm transition-shadow">
+            <span class="font-medium">{{ task.name }}</span>
+            <span class="text-sm text-text/60">{{ task.buffer_deadline|friendly_date }}</span>
+        </a>
+        {% else %}
+        <p class="text-text/50">Nothing else on deck right now.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

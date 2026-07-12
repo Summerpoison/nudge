@@ -70,3 +70,39 @@ def get_all_tasks() -> list[dict]:
     rows = conn.execute("SELECT * FROM tasks ORDER BY buffer_deadline ASC").fetchall()
     conn.close()
     return [dict(row) for row in rows]
+
+
+def update_task_status(task_id: int, status: str) -> None:
+    conn = get_connection()
+    conn.execute("UPDATE tasks SET status = ? WHERE id = ?", (status, task_id))
+    conn.commit()
+    conn.close()
+
+
+def add_task_event(task_id: int, event_type: str, description: str) -> None:
+    conn = get_connection()
+    conn.execute(
+        "INSERT INTO task_events (task_id, event_type, description, created_at) VALUES (?, ?, ?, ?)",
+        (task_id, event_type, description, datetime.now().isoformat()),
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_task_events(task_id: int) -> list[dict]:
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT * FROM task_events WHERE task_id = ? ORDER BY created_at ASC", (task_id,)
+    ).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
+def buffer_progress_percent(task: dict) -> int:
+    created_at = datetime.fromisoformat(task["created_at"])
+    buffer_deadline = datetime.fromisoformat(task["buffer_deadline"])
+    window = (buffer_deadline - created_at).total_seconds()
+    if window <= 0:
+        return 100
+    elapsed = (datetime.now() - created_at).total_seconds()
+    return max(0, min(100, int(elapsed / window * 100)))

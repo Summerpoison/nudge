@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}All Tasks | Nudge{% endblock %}
+{% block content %}
+<h2 class="font-display font-bold text-3xl mb-8">All Tasks</h2>
+
+<div class="flex flex-col gap-3 mb-10 max-w-2xl">
+    {% for task in tasks %}
+    <a href="{{ url_for('task_detail', task_id=task.id) }}"
+       class="flex justify-between items-center bg-surface rounded-lg px-5 py-4 hover:shadow-sm transition-shadow">
+        <div class="flex items-center gap-3">
+            <span class="font-medium">{{ task.name }}</span>
+            <span class="text-xs uppercase tracking-wide px-2 py-0.5 rounded-full
+                {{ 'bg-primary/30' if task.status == 'active' else 'bg-black/10 text-text/60' }}">
+                {{ task.status.replace('_', ' ') }}
+            </span>
+        </div>
+        <span class="text-sm text-text/60">{{ task.buffer_deadline|friendly_date }}</span>
+    </a>
+    {% else %}
+    <p class="text-text/60">No tasks yet — add your first one below.</p>
+    {% endfor %}
+</div>
+
+<section class="bg-surface rounded-xl p-6 max-w-md">
+    <h3 class="font-display font-semibold text-lg mb-4">Add a task</h3>
+    <form method="post" action="{{ url_for('all_tasks') }}" class="flex flex-col gap-4">
+        <input type="text" name="name" placeholder="Task name" required
+               class="border-b border-black/20 focus:border-primary outline-none py-2 bg-transparent">
+        <input type="datetime-local" name="external_deadline" required
+               class="border-b border-black/20 focus:border-primary outline-none py-2 bg-transparent">
+        <button type="submit" class="bg-accent text-white font-semibold px-6 py-3 rounded-lg self-start">
+            Add Task
+        </button>
+    </form>
+</section>
+{% endblock %}
