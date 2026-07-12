@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nudge - Task Detail: Q4 Strategy Deck</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#e2e2e2",
+                    "on-tertiary-fixed-variant": "#005143",
+                    "on-tertiary-fixed": "#00201a",
+                    "on-tertiary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#3d4945",
+                    "inverse-on-surface": "#f1f1f1",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#70d9ba",
+                    "on-secondary-container": "#007346",
+                    "surface-container-high": "#e8e8e8",
+                    "surface-bright": "#f9f9f9",
+                    "primary-fixed": "#8cf6d6",
+                    "secondary": "#006d41",
+                    "on-secondary-fixed": "#002110",
+                    "on-primary-container": "#f5fff9",
+                    "on-error-container": "#93000a",
+                    "background": "#f9f9f9",
+                    "surface-container-low": "#f4f3f3",
+                    "tertiary": "#146858",
+                    "surface-container": "#eeeeee",
+                    "secondary-fixed": "#95f7bb",
+                    "surface-dim": "#dadada",
+                    "surface-tint": "#006b56",
+                    "on-primary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed-variant": "#005230",
+                    "outline-variant": "#bdc9c3",
+                    "surface": "#f9f9f9",
+                    "on-primary-fixed": "#002018",
+                    "primary-fixed-dim": "#70d9ba",
+                    "primary": "#006954",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-container": "#95f7bb",
+                    "on-surface": "#1a1c1c",
+                    "on-tertiary-container": "#f4fffa",
+                    "secondary-fixed-dim": "#7adaa1",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#358170",
+                    "surface-variant": "#e2e2e2",
+                    "outline": "#6d7a74",
+                    "tertiary-fixed-dim": "#8ad5c1",
+                    "tertiary-fixed": "#a6f1dd",
+                    "primary-container": "#00846a",
+                    "on-background": "#1a1c1c",
+                    "inverse-surface": "#2f3131",
+                    "on-primary-fixed-variant": "#005140"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "12px",
+                    "stack-md": "24px",
+                    "container-max": "1120px",
+                    "gutter": "24px",
+                    "base": "8px",
+                    "stack-lg": "48px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "title-md": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .input-underline {
+            border: none;
+            border-bottom: 1px solid #DDDDDD;
+            background: transparent;
+            transition: border-color 0.2s ease;
+        }
+        .input-underline:focus {
+            outline: none;
+            border-bottom: 2px solid #006954;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- Layout Container -->
+<div class="flex h-screen overflow-hidden">
+<!-- SideNavBar (Left Sidebar) -->
+<aside class="flex flex-col h-full p-gutter bg-surface-container-low border-r border-surface-container-highest w-64 fixed left-0 top-0 z-40">
+<div class="mb-stack-lg">
+<div class="font-display-lg text-display-lg text-primary mb-2">Nudge</div>
+<div class="text-on-surface-variant font-label-sm uppercase tracking-widest">Deep Work Mode</div>
+</div>
+<button class="mb-stack-md w-full bg-primary-container text-on-primary-container py-3 px-4 rounded-lg font-medium flex items-center justify-center gap-2 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">add</span>
+                New Task
+            </button>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">center_focus_strong</span>
+<span>Focus</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-medium" href="#">
+<span class="material-symbols-outlined">checklist</span>
+<span>All Tasks</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">history</span>
+<span>History</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-surface-container-highest pt-gutter flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span>Help</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 overflow-y-auto bg-background">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-30 flex items-center justify-between px-gutter py-4 w-full bg-background/80 backdrop-blur-md border-b border-surface-container">
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<span class="font-title-md text-title-md text-primary">Task Detail</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">settings</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a user with a neutral, calm expression, styled in a minimalist corporate aesthetic with soft, high-key studio lighting and a clean off-white background to match the Nudge brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3AcwDCk6nFo4L_Rm96HIhX8HLZtsdgFtUlRki6wMskSeD3AzmKYMhHlQMTheZTnMtTkxqXfvKVbLoWU-nJ8OisP0xgKSfA31ANgZ2rWHTnev0QzOMwYqC5sO3W0fR68KxDp0WlBLEffA1ZaL1sCnd_riRdsmkKwv0ho3huF8eJqYTUZMVdHsZ1KzzJMAXz7van26wfuKV2nB63aLgWxP_4zA5cnU30g-P6dXJd64zkyheV7di_-Yae-bF42TARXbaImT1qzeQk90"/>
+</div>
+</div>
+</header>
+<!-- Content Grid -->
+<div class="max-w-[1400px] mx-auto px-gutter py-stack-lg">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Main Content (Middle - 8 cols) -->
+<div class="lg:col-span-8 flex flex-col gap-stack-md">
+<!-- Task Header -->
+<section class="bg-surface-container-lowest p-stack-md rounded-xl border border-surface-container-highest shadow-sm">
+<div class="flex flex-col gap-4">
+<div class="flex items-start justify-between">
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Finalize Q4 Strategy Deck</h1>
+<div class="flex items-center gap-2">
+<span class="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-[10px] uppercase tracking-wider">In Progress</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-4 border-t border-surface-container pt-4">
+<div class="flex items-center gap-6 text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">event</span>
+<span class="font-label-sm">Nov 24, 2023</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">priority_high</span>
+<span class="font-label-sm">High Priority</span>
+</div>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 bg-primary/5 rounded-lg border border-primary/10">
+<span class="material-symbols-outlined text-primary text-[18px]">hourglass_top</span>
+<span class="font-body-md font-semibold text-primary">+4h 20m remaining</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Notes & Strategy -->
+<section class="bg-surface-container-lowest p-stack-md rounded-xl border border-surface-container-highest">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-title-md text-title-md text-primary">Notes &amp; Strategy</h2>
+<button class="text-primary hover:underline font-label-sm">Edit</button>
+</div>
+<div class="text-on-surface space-y-4 font-body-md leading-relaxed">
+<p>This deck needs to synthesize the learnings from the Q3 pivot and align the engineering roadmaps with the revised commercial goals for the upcoming fiscal year.</p>
+<ul class="list-disc ml-5 space-y-2 text-on-surface-variant">
+<li>Review customer churn data from October.</li>
+<li>Integrate the new feature prioritization framework.</li>
+<li>Ensure stakeholder buy-in on the "Sanctuary UI" initiative.</li>
+</ul>
+</div>
+</section>
+<!-- Activity Log -->
+<section class="bg-surface-container-lowest p-stack-md rounded-xl border border-surface-container-highest">
+<h2 class="font-title-md text-title-md text-primary mb-6">Activity Log</h2>
+<div class="space-y-6 relative before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[1px] before:bg-surface-container-highest">
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-background border border-primary flex items-center justify-center z-10">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+<div class="flex flex-col">
+<p class="font-body-md text-on-surface">Draft sent for initial review to the Leadership team.</p>
+<span class="text-[12px] text-outline mt-1 uppercase font-semibold">Today, 10:24 AM</span>
+</div>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-background border border-surface-container-highest flex items-center justify-center z-10">
+<div class="w-2 h-2 rounded-full bg-outline"></div>
+</div>
+<div class="flex flex-col">
+<p class="font-body-md text-on-surface">Checkpoint reached: Financial model integrated into Slide 14.</p>
+<span class="text-[12px] text-outline mt-1 uppercase font-semibold">Yesterday, 4:15 PM</span>
+</div>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-background border border-surface-container-highest flex items-center justify-center z-10">
+<div class="w-2 h-2 rounded-full bg-outline"></div>
+</div>
+<div class="flex flex-col">
+<p class="font-body-md text-on-surface">Buffer added: System extended the soft deadline by 2 hours based on focus patterns.</p>
+<span class="text-[12px] text-outline mt-1 uppercase font-semibold">Nov 21, 9:00 AM</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Sidebar (4 cols) -->
+<aside class="lg:col-span-4 flex flex-col gap-stack-md">
+<!-- Task Management -->
+<div class="bg-surface-container-lowest p-stack-md rounded-xl border border-surface-container-highest">
+<h3 class="font-label-sm text-outline uppercase tracking-wider mb-4">Task Management</h3>
+<div class="space-y-4">
+<div>
+<label class="font-label-sm text-on-surface-variant block mb-2">Update Status</label>
+<select class="w-full input-underline py-2 text-on-surface focus:ring-0">
+<option>Open</option>
+<option selected="">In Progress</option>
+<option>Awaiting Review</option>
+<option>Completed</option>
+</select>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 px-6 rounded-lg font-medium hover:opacity-90 transition-opacity">
+                            Mark as Completed
+                        </button>
+<button class="w-full border border-primary text-primary py-3 px-6 rounded-lg font-medium hover:bg-primary/5 transition-colors">
+                            Request Extension
+                        </button>
+</div>
+</div>
+<!-- Attachments -->
+<section class="bg-surface-container-lowest p-stack-md rounded-xl border border-surface-container-highest">
+<h2 class="font-label-sm text-outline uppercase tracking-wider mb-4">Attachments</h2>
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-3 p-3 border border-surface-container rounded-lg hover:border-primary cursor-pointer group transition-all">
+<div class="w-10 h-10 flex items-center justify-center bg-surface-container-high rounded text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="font-label-sm truncate">Q3_Data_Source.pdf</p>
+<p class="text-[10px] text-outline uppercase font-semibold">2.4 MB</p>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary">download</span>
+</div>
+<div class="flex items-center gap-3 p-3 border border-surface-container rounded-lg hover:border-primary cursor-pointer group transition-all">
+<div class="w-10 h-10 flex items-center justify-center bg-surface-container-high rounded text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="font-label-sm truncate">Strategy_Draft_v1.docx</p>
+<p class="text-[10px] text-outline uppercase font-semibold">152 KB</p>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary">download</span>
+</div>
+</div>
+<button class="mt-4 flex items-center gap-2 text-primary font-label-sm hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Add Attachment
+                    </button>
+</section>
+<!-- Assignees -->
+<div class="bg-surface-container-lowest p-stack-md rounded-xl border border-surface-container-highest">
+<h3 class="font-label-sm text-outline uppercase tracking-wider mb-4">Assignees</h3>
+<div class="flex -space-x-2 overflow-hidden mb-4">
+<img class="inline-block h-10 w-10 rounded-full ring-2 ring-background object-cover" data-alt="Close up avatar of a young female professional with glasses, minimalist style, bright teal accent in clothing, clean white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoLnIeyH2JhMnrDCK5Td2Jjh7JdRMFvMKYFajhuysMAGZ4XECjKJMbR51nVV1GL7hVLKmI_cndm481sVr2YJghmQkpviHRvkdpjdhNdPbQPujL-xBekirFqCIh39dliBEaEQ0GTet8iJKXmWvdixbfkJuKumjrGo07EC-cyTojuElhSTvKTCnhyouHtUzHqbAEhiPQT-8MLtQArgqvsASpdFmSgxCUwZBisiaYeqt_GAKOGbnlgyCJqhtZgs85ne4EdhXi0uXFf6A"/>
+<img class="inline-block h-10 w-10 rounded-full ring-2 ring-background object-cover" data-alt="Avatar of a male professional, serene expression, minimalist look, high-key lighting, soft teal background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDr9AECROnWOxs64e4B4_iw125B6dGPoFbClpBhTzvBQo8zycl9oTo_N9L66tutyliEdCwJDL58ODMCvEBXU6OSNxVIdcsWnbgLVu0VveSrflJ1FnT7I96LozX_NLS_wpVK-iVTUm8nN4i8PyL9Fnpk4wigNqYAoSoX55pra7Gs_igBddPwt52VHuT82sRb8FX50yqVQ_vx9rThVr40BOM-Nzzw-CVify_JBkWZvErK78TlQFV7b4IdN_MRM52GJIXDd1_HiS2cCEA"/>
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container-high ring-2 ring-background text-[12px] font-bold text-on-surface-variant">+3</div>
+</div>
+<button class="w-full text-on-surface-variant font-label-sm border-t border-surface-container-highest pt-4 flex items-center justify-center gap-2 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">group_add</span>
+                        Manage Team
+                    </button>
+</div>
+<!-- Studio Context -->
+<div class="rounded-xl overflow-hidden aspect-video border border-surface-container-highest relative group">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent z-10 transition-opacity group-hover:opacity-60"></div>
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist workspace with a single laptop, a glass of water, and a small green plant. Bright sunlight filters through a window, creating soft shadows. The overall aesthetic is calm, professional, and reflects the Deep Work philosophy of Nudge." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApO4GlPnbg5hMQZ4OM0MVKWLuEVgcipDmss76fUNNIiQwSQQSpyWEvb2JqmSGBsWjSu5Do16sE0FgYV6iICtvnGfl4lYa-3oZbkRzur0e1Du670Sjj0xXGhKLv997_IyIBPku1GYV1wU8Hl1PLsaES6RzGtF2ik36tW7lAQjcxp2_Wx2X_HKiMLI7e04XJhRrbvxNmPjwI_2kSH1sBUzzk8iGHnMRES1CEiz7Wn4Pgr6D81hgUeHH4EAMS0tUyRyzCNMBt2mP8z20"/>
+<div class="absolute bottom-3 left-3 z-20">
+<span class="text-white font-label-sm px-2 py-1 bg-black/30 backdrop-blur-md rounded">Studio Context</span>
+</div>
+</div>
+</aside>
+</div>
+</div>
+</main>
+</div>
+<script>
+        const statusSelect = document.querySelector('select');
+        statusSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            const badge = document.querySelector('.px-3.py-1.rounded-full');
+            if (val === 'Completed') {
+                badge.className = 'px-3 py-1 rounded-full bg-on-secondary-container text-on-primary-container font-label-sm text-[10px] uppercase tracking-wider transition-colors duration-300';
+                badge.innerText = 'Completed';
+            } else if (val === 'Awaiting Review') {
+                badge.className = 'px-3 py-1 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-[10px] uppercase tracking-wider transition-colors duration-300';
+                badge.innerText = 'In Review';
+            } else {
+                badge.className = 'px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-[10px] uppercase tracking-wider transition-colors duration-300';
+                badge.innerText = 'In Progress';
+            }
+        });
+    </script>
+</body></html>
