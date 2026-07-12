@@ -162,6 +162,13 @@ def is_urgent(task: dict, threshold_days: float = URGENT_THRESHOLD_DAYS) -> bool
 # is not a check-in.
 CHECK_IN_EVENT_TYPES = {"artifact_submitted", "triage_draft_sent"}
 
+# How long after a checkpoint's own due time a check-in still counts for
+# it. Deliberately tight and decoupled from the next checkpoint/buffer
+# deadline -- an early check-in from days before shouldn't retroactively
+# cover a later checkpoint, and "checkpoint missed" shouldn't take days to
+# become true just because the next checkpoint is far off.
+CHECKPOINT_GRACE_HOURS = 24
+
 
 def _has_check_in(events: list[dict], window_start: datetime, window_end: datetime) -> bool:
     return any(
@@ -171,14 +178,35 @@ def _has_check_in(events: list[dict], window_start: datetime, window_end: dateti
     )
 
 
+def _checkpoint_status_from_events(checkpoint_time: datetime, events: list[dict]) -> str:
+    now = datetime.now()
+    if now < checkpoint_time:
+        return "pending"
+    grace_end = checkpoint_time + timedelta(hours=CHECKPOINT_GRACE_HOURS)
+    if _has_check_in(events, checkpoint_time, grace_end):
+        return "checked_in"
+    if now < grace_end:
+        return "grace"
+    return "missed"
+
+
+def checkpoint_check_in_status(task: dict, checkpoint_number: int) -> str:
+    """One of 'pending', 'checked_in', 'grace', or 'missed' -- for the
+    single-task-view checkpoint indicators."""
+    checkpoint_time = datetime.fromisoformat(task[f"checkpoint_{checkpoint_number}"])
+    events = get_task_events(task["id"])
+    return _checkpoint_status_from_events(checkpoint_time, events)
+
+
 def needs_buddy_alert(task: dict, threshold_days: float = URGENT_THRESHOLD_DAYS) -> bool:
     """ESC-FUNC-004: escalation stage 3.
 
     Buffer deadline blown is always a definite alert. Short of that, a
     single missed checkpoint isn't enough on its own -- checking in at
     checkpoint 1 but skipping checkpoint 2 usually still leaves enough
-    runway to hit the buffer deadline. Only *both* checkpoints going by
-    without an interaction means the buddy gets pulled in.
+    runway to hit the buffer deadline. Only *both* checkpoints going
+    unanswered (each within its own CHECKPOINT_GRACE_HOURS window) means
+    the buddy gets pulled in.
     """
     if task["status"] != "active" or task["buddy_alerted"]:
         return False
@@ -186,18 +214,18 @@ def needs_buddy_alert(task: dict, threshold_days: float = URGENT_THRESHOLD_DAYS)
         return False
 
     now = datetime.now()
-    created_at = datetime.fromisoformat(task["created_at"])
-    checkpoint_2 = datetime.fromisoformat(task["checkpoint_2"])
     buffer_deadline = datetime.fromisoformat(task["buffer_deadline"])
-
     if now >= buffer_deadline:
         return True
-    if now < checkpoint_2:
-        return False
+
+    checkpoint_1 = datetime.fromisoformat(task["checkpoint_1"])
+    checkpoint_2 = datetime.fromisoformat(task["checkpoint_2"])
+    if now < checkpoint_2 + timedelta(hours=CHECKPOINT_GRACE_HOURS):
+        return False  # checkpoint 2's own grace window hasn't closed yet
 
     events = get_task_events(task["id"])
-    checkpoint_1_missed = not _has_check_in(events, created_at, checkpoint_2)
-    checkpoint_2_missed = not _has_check_in(events, checkpoint_2, now)
+    checkpoint_1_missed = _checkpoint_status_from_events(checkpoint_1, events) == "missed"
+    checkpoint_2_missed = _checkpoint_status_from_events(checkpoint_2, events) == "missed"
     return checkpoint_1_missed and checkpoint_2_missed
 
 

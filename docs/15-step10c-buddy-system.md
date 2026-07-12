@@ -17,19 +17,25 @@ Der Design-Entscheid hatte bewusst offengelassen: *"Automatisch ohne Rückfrage 
 
 Das ist strenger als der ursprüngliche Design-Text ("bei Stufe 3 / 75%-Checkpoint verpasst"), aber inhaltlich näher an der eigentlichen Absicht: der Buddy soll erst einspringen, wenn die Selbstregulierung über einen längeren Zeitraum ausgeblieben ist — nicht bei einer einzelnen verpassten Gelegenheit.
 
-## Warum "missed" aus `task_events` berechnet wird, nicht aus einem neuen Feld
+### Nachtrag: Zeitfenster nachträglich verschärft
 
-Es gibt kein "Checkpoint 1 erledigt"-Flag im Datenmodell — nur die generischen `task_events` (`artifact_submitted`, `triage_draft_sent`, ...) mit Zeitstempel. Statt ein neues Schema-Feld pro Checkpoint einzuführen, wird "verpasst" als reine Funktion aus vorhandenen Daten berechnet — gleiches Prinzip wie `is_urgent()`/`is_checkpoint_due()` (ESC-FUNC-001: "berechneter, nicht manuell gesetzter Zustand"):
+Erste Version dieser Regel hatte ein Problem, das die Nutzerin beim Review fand: das Zeitfenster für "Checkpoint 1 erfüllt" reichte von der Task-Anlage bis Checkpoint 2 — jede Interaktion in diesem gesamten Zeitraum zählte, egal wie früh. Ein Upload bei z. B. 30% hätte damit automatisch auch den 50%-Checkpoint "erfüllt", ohne dass tatsächlich zum fälligen Zeitpunkt reagiert wurde. Zusätzlich reichte das Fenster für "Checkpoint 2 erfüllt" bis zur Buffer-Deadline, was das System begrifflich mit "Buffer-Deadline verpasst" vermischte, obwohl beides technisch unabhängig geprüft wird.
+
+**Fix:** Jeder Checkpoint bekommt ein eigenes, festes Gnadenfenster von **`CHECKPOINT_GRACE_HOURS = 24` Stunden** ab seiner eigenen Fälligkeit — unabhängig vom nächsten Checkpoint oder der Buffer-Deadline. "Verpasst" heißt jetzt konkret: keine Interaktion innerhalb `[checkpoint_zeit, checkpoint_zeit + 24h]`, und dieses Fenster ist bereits abgelaufen. Ein Upload bei 30% deckt damit nur noch sich selbst ab, nicht mehr automatisch spätere Checkpoints.
 
 ```python
-CHECK_IN_EVENT_TYPES = {"artifact_submitted", "triage_draft_sent"}
+CHECKPOINT_GRACE_HOURS = 24
 
-def _has_check_in(events, window_start, window_end):
-    return any(
-        event["event_type"] in CHECK_IN_EVENT_TYPES
-        and window_start <= datetime.fromisoformat(event["created_at"]) <= window_end
-        for event in events
-    )
+def _checkpoint_status_from_events(checkpoint_time, events):
+    now = datetime.now()
+    if now < checkpoint_time:
+        return "pending"
+    grace_end = checkpoint_time + timedelta(hours=CHECKPOINT_GRACE_HOURS)
+    if _has_check_in(events, checkpoint_time, grace_end):
+        return "checked_in"
+    if now < grace_end:
+        return "grace"
+    return "missed"
 
 def needs_buddy_alert(task, threshold_days=URGENT_THRESHOLD_DAYS):
     if task["status"] != "active" or task["buddy_alerted"]:
@@ -38,22 +44,30 @@ def needs_buddy_alert(task, threshold_days=URGENT_THRESHOLD_DAYS):
         return False
 
     now = datetime.now()
-    created_at = datetime.fromisoformat(task["created_at"])
-    checkpoint_2 = datetime.fromisoformat(task["checkpoint_2"])
     buffer_deadline = datetime.fromisoformat(task["buffer_deadline"])
-
     if now >= buffer_deadline:
         return True
-    if now < checkpoint_2:
-        return False
+
+    checkpoint_1 = datetime.fromisoformat(task["checkpoint_1"])
+    checkpoint_2 = datetime.fromisoformat(task["checkpoint_2"])
+    if now < checkpoint_2 + timedelta(hours=CHECKPOINT_GRACE_HOURS):
+        return False  # checkpoint 2's own grace window hasn't closed yet
 
     events = get_task_events(task["id"])
-    checkpoint_1_missed = not _has_check_in(events, created_at, checkpoint_2)
-    checkpoint_2_missed = not _has_check_in(events, checkpoint_2, now)
+    checkpoint_1_missed = _checkpoint_status_from_events(checkpoint_1, events) == "missed"
+    checkpoint_2_missed = _checkpoint_status_from_events(checkpoint_2, events) == "missed"
     return checkpoint_1_missed and checkpoint_2_missed
 ```
 
-"Checkpoint 1 verpasst" bedeutet: keine Interaktion zwischen Task-Anlage und Checkpoint 2 — jede Interaktion vor Checkpoint 2 zählt als "Checkpoint 1 erfüllt", auch wenn sie zeitlich vor Checkpoint 1 selbst lag. "Checkpoint 2 verpasst": keine Interaktion zwischen Checkpoint 2 und jetzt. Die teure `get_task_events()`-Abfrage läuft erst, nachdem die billigen Vorprüfungen (Status, `buddy_alerted`, `is_urgent`, Buffer-Deadline, Checkpoint-2-Fälligkeit) den Task bereits als echten Kandidaten bestätigt haben — kein unnötiger N+1-Overhead für die Mehrheit der Tasks, die gar nicht in der Nähe der Eskalation sind.
+`_checkpoint_status_from_events()` returns one of four states (`pending`, `checked_in`, `grace`, `missed`), reused both for the alert decision and for the single-task-view indicator below — one function, two consumers, no duplicated windowing logic. `CHECKPOINT_GRACE_HOURS` is a hardcoded constant for now (same pattern `URGENT_THRESHOLD_DAYS` started as before it got a Settings field in Schritt 10b) — not exposed in Settings yet, since the buddy system as a whole is still Should-priority.
+
+## Warum "missed" aus `task_events` berechnet wird, nicht aus einem neuen Feld
+
+Es gibt kein "Checkpoint 1 erledigt"-Flag im Datenmodell — nur die generischen `task_events` (`artifact_submitted`, `triage_draft_sent`, ...) mit Zeitstempel. Statt ein neues Schema-Feld pro Checkpoint einzuführen, wird "verpasst" als reine Funktion aus vorhandenen Daten berechnet — gleiches Prinzip wie `is_urgent()`/`is_checkpoint_due()` (ESC-FUNC-001: "berechneter, nicht manuell gesetzter Zustand"). Die teure `get_task_events()`-Abfrage in `needs_buddy_alert()` läuft erst, nachdem die billigen Vorprüfungen (Status, `buddy_alerted`, `is_urgent`, Buffer-Deadline, Checkpoint-2-Gnadenfenster) den Task bereits als echten Kandidaten bestätigt haben — kein unnötiger N+1-Overhead für die Mehrheit der Tasks, die gar nicht in der Nähe der Eskalation sind.
+
+## Checkpoint-Status auf der Task-Detail-Seite
+
+Zweiter Nachtrag aus dem Review: auf einen Blick sichtbar machen, ob ein Checkpoint erfüllt wurde. `checkpoint_check_in_status(task, checkpoint_number)` (dieselbe Zustandsmaschine wie oben) wird in der `task_detail`-Route berechnet und in `task_detail.html` als kleines Icon neben dem jeweiligen Checkpoint-Label gerendert: grüner Haken (`check_circle`, erfüllt), gelbe Uhr (`schedule`, noch im Gnadenfenster), rotes Kreuz (`cancel`, verpasst), kein Icon (noch nicht fällig).
 
 ## ESC-FUNC-002: kein "Important"-Feld, also reines Urgent-Gate
 
@@ -97,13 +111,20 @@ Betreff und Text enthalten nur den Task-Namen — kein Deadline, kein Status, ke
 
 ## Verifikation
 
-Manuell gegen Mailpit getestet (Kern-App, Worker und Mailpit lokal gestartet, Buddy-E-Mail über `/settings` gesetzt):
+Manuell gegen Mailpit getestet (Kern-App, Worker und Mailpit lokal gestartet, Buddy-E-Mail über `/settings` gesetzt), zwei Runden — erste Runde mit der ursprünglichen breiten Fensterlogik, zweite Runde nach der Verschärfung:
 
-1. **Seed-Daten, unverändert:** "Fix login bug" und "Prepare oral exam slides" erfüllen bereits beide die verschärfte Regel (beide Checkpoints ohne Interaktion verstrichen) → beide lösten beim ersten Poll-Zyklus einen Alert aus, sichtbar in Mailpit (`Nudge Buddy Alert: Fix login bug` / `... Prepare oral exam slides`, Empfänger = Buddy-Adresse, Inhalt exakt wie oben).
-2. **Kein Doppelversand:** zweiter Poll-Zyklus (30s später) — kein erneuter "Sent buddy alert"-Log-Eintrag für dieselben Tasks. `buddy_alerted` in der DB korrekt auf 1, Activity-Timeline zeigt den Eintrag.
-3. **Checkpoint 1 erfüllt, Checkpoint 2 verpasst, Buffer-Deadline noch nicht erreicht** (Ad-hoc-Testtask): `needs_buddy_alert` korrekt `False` — bestätigt die Nutzerinnen-Regel, dass ein einzelner verpasster Checkpoint keinen Alert auslöst.
-4. **Buffer-Deadline künstlich in die Vergangenheit verschoben** (gleicher Testtask, Checkpoint 1 weiterhin erfüllt): `needs_buddy_alert` sofort `True` — bestätigt den bedingungslosen Override bei überschrittener Buffer-Deadline.
-5. Testtask danach wieder entfernt, Datenbank mit `seed_data.py` neu geseedet für einen sauberen Zustand.
+**Erste Runde (breite Fenster, vor dem Nachtrag):**
+1. "Fix login bug" (Buffer-Deadline bereits überschritten) und "Prepare oral exam slides" (beide Checkpoints ohne Interaktion verstrichen) lösten beim ersten Poll-Zyklus je einen Alert aus, sichtbar in Mailpit (`Nudge Buddy Alert: Fix login bug` / `... Prepare oral exam slides`, Empfänger = Buddy-Adresse, Inhalt exakt wie oben).
+2. Kein Doppelversand im zweiten Poll-Zyklus (30s später) — `buddy_alerted` korrekt auf 1, Activity-Timeline zeigt den Eintrag.
+3. Ad-hoc-Testtask mit Checkpoint 1 erfüllt / Checkpoint 2 verpasst / Buffer-Deadline noch offen: `needs_buddy_alert` korrekt `False` — bestätigt die Grundregel, dass ein einzelner verpasster Checkpoint keinen Alert auslöst.
+4. Gleicher Testtask, Buffer-Deadline künstlich in die Vergangenheit verschoben: `needs_buddy_alert` sofort `True` — bestätigt den bedingungslosen Override.
+
+**Zweite Runde (nach der 24h-Gnadenfenster-Verschärfung, gegen frisch geseedete Daten):**
+5. "Fix login bug" (Buffer-Deadline längst überschritten) weiterhin `needs_buddy_alert = True` — Override funktioniert unverändert unabhängig vom Gnadenfenster.
+6. "Prepare oral exam slides" (Checkpoint 2 erst vor ca. 8h fällig geworden) jetzt korrekt `needs_buddy_alert = False`, weil das 24h-Gnadenfenster für Checkpoint 2 noch nicht abgelaufen ist — genau der Unterschied, den die Verschärfung bewirken sollte (vorher hätte dieselbe Konstellation sofort gefeuert).
+7. Task-Detail-Ansicht für alle vier Zustände geprüft: `pending` (kein Icon, "Write research proposal", Checkpoints noch nicht fällig), `missed` (rotes Kreuz, "Fix login bug", beide Checkpoints), `grace` (gelbe Uhr, "Prepare oral exam slides" Checkpoint 2), `checked_in` (grüner Haken, Ad-hoc-Event innerhalb des Checkpoint-1-Gnadenfensters von "Fix login bug" eingefügt) — alle vier rendern das erwartete Icon.
+8. Mit demselben Ad-hoc-Check-in-Event (Checkpoint 1 jetzt "checked_in") blieb `needs_buddy_alert` für "Fix login bug" weiterhin `True`, weil die Buffer-Deadline bereits überschritten ist — bestätigt, dass der Override Vorrang vor dem Checkpoint-Status hat.
+9. Alle Testtasks/-events wieder entfernt, Datenbank mit `seed_data.py` neu geseedet für einen sauberen Zustand.
 
 ## Nächster Schritt
 

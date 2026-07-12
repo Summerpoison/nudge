@@ -7,6 +7,7 @@ from db import init_db
 from models import (
     add_task_event,
     buffer_progress_percent,
+    checkpoint_check_in_status,
     create_task,
     get_all_tasks,
     get_settings,
@@ -97,6 +98,8 @@ def task_detail(task_id):
         attachments=list_attachments(task_id),
         buffer_pct=buffer_progress_percent(task),
         checkpoint_due=is_checkpoint_due(task),
+        checkpoint_1_status=checkpoint_check_in_status(task, 1),
+        checkpoint_2_status=checkpoint_check_in_status(task, 2),
     )
 
 

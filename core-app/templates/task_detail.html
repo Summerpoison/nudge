@@ -42,14 +42,28 @@
                     <dd class="text-sm font-medium text-text">{{ task.buffer_deadline|friendly_date }}</dd>
                 </div>
                 <div>
-                    <dt class="uppercase text-xs tracking-wide font-semibold text-text/70 mb-1">
+                    <dt class="uppercase text-xs tracking-wide font-semibold text-text/70 mb-1 flex items-center gap-1">
                         Checkpoint 1 ({{ (task.checkpoint_1_ratio * 100)|round|int }}%)
+                        {% if checkpoint_1_status == 'checked_in' %}
+                        <span class="material-symbols-outlined text-[16px] text-accent" title="Checked in">check_circle</span>
+                        {% elif checkpoint_1_status == 'grace' %}
+                        <span class="material-symbols-outlined text-[16px] text-amber-500" title="Grace period -- check in soon">schedule</span>
+                        {% elif checkpoint_1_status == 'missed' %}
+                        <span class="material-symbols-outlined text-[16px] text-red-500" title="Missed">cancel</span>
+                        {% endif %}
                     </dt>
                     <dd class="text-sm font-medium text-text">{{ task.checkpoint_1|friendly_date }}</dd>
                 </div>
                 <div>
-                    <dt class="uppercase text-xs tracking-wide font-semibold text-text/70 mb-1">
+                    <dt class="uppercase text-xs tracking-wide font-semibold text-text/70 mb-1 flex items-center gap-1">
                         Checkpoint 2 ({{ (task.checkpoint_2_ratio * 100)|round|int }}%)
+                        {% if checkpoint_2_status == 'checked_in' %}
+                        <span class="material-symbols-outlined text-[16px] text-accent" title="Checked in">check_circle</span>
+                        {% elif checkpoint_2_status == 'grace' %}
+                        <span class="material-symbols-outlined text-[16px] text-amber-500" title="Grace period -- check in soon">schedule</span>
+                        {% elif checkpoint_2_status == 'missed' %}
+                        <span class="material-symbols-outlined text-[16px] text-red-500" title="Missed">cancel</span>
+                        {% endif %}
                     </dt>
                     <dd class="text-sm font-medium text-text">{{ task.checkpoint_2|friendly_date }}</dd>
                 </div>
