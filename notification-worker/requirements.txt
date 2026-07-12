@@ -1,0 +1,5 @@
+# No external dependencies yet. REVIEW-NFR-001 requires stdlib-only
+# smtplib/imaplib once email sending/reading is added (Step 6+); this
+# step's REST polling also uses stdlib (urllib.request), so nothing
+# to install for now. Kept as a placeholder for consistency with
+# core-app's per-process requirements.txt.
