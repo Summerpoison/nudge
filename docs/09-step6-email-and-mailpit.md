@@ -82,6 +82,18 @@ Vollständiger lokaler Testlauf mit allen drei Prozessen (core-app, notification
 
 Alle Prozesse (core-app, Worker, Mailpit) danach gestoppt, Testdatenbank gelöscht.
 
+## Nachtrag aus der Nutzerinnen-Review: Skalierung bei vielen offenen Tasks
+
+**Aufgeworfen:** `build_review_email()` hatte keine Obergrenze — bei 20+ offenen Tasks würde die Mail zu einer unübersichtlichen Textwand. Vorschlag der Nutzerin: nur Tasks mit Deadline in den nächsten 14 Tagen, bei mehr als 10 nur die 10 dringendsten, in Fünferblöcken.
+
+**Analyse:** REVIEW-FUNC-003 verlangt wörtlich "eine E-Mail mit **allen** offenen Tasks" (Must). Das Original-Spec (`adhd-proof-workflow-spec_v2.md`, Modul 4) begründet das explizit: *"Lists all open tasks... makes the invisible visible... You reply with your top 3 priorities... The system doesn't let you say 'all of them.'"* Der Überlastungsschutz ist im Design bewusst auf die **Antwort** verlagert (Zwang zur Wahl von genau 3), nicht auf die Anzeige — vollständige Sichtbarkeit ist hier der Punkt, nicht ein Nebeneffekt. Ein stiller Cutoff bei 10 Tasks würde sowohl vom Anforderungstext als auch von dieser Design-Begründung abweichen.
+
+**Entscheidung (mit Nutzerin abgestimmt):** Weiterhin **alle** offenen Tasks auflisten, aber lesbarer formatieren:
+- Tasks erscheinen bereits nach Dringlichkeit sortiert (`/api/tasks` ordnet nach Buffer-Deadline, diese Reihenfolge bleibt durch den Listen-Filter in `fetch_open_tasks()` erhalten).
+- Neue Konstante `TASKS_PER_BLOCK = 5`: nach jeweils 5 Tasks wird eine Trennlinie (`---...`) eingefügt — rein visuelle Gliederung, keine Task fällt weg. Getestet mit 12 Tasks: korrekte Blöcke 5/5/2, durchgehend nach Dringlichkeit sortiert.
+
+**Zurückgestellter Alternativvorschlag (für später, falls sich in der Praxis ein echtes Bedürfnis zeigt):** 14-Tage-Fenster + Cap bei 10 dringendsten Tasks, wie ursprünglich vorgeschlagen. Nutzerin vermutet, dass sich dieses Muster im echten Gebrauch von selbst ergeben könnte (z. B. durch manuelles Filtern/Ignorieren weit entfernter Tasks) und dass die geplante "deadline-lose Tasks"-Erweiterung (siehe `05-step2-task-model.md`, Abschnitt "Scope-Frage während Review") die Größe der aktiven Task-Liste ohnehin reduzieren dürfte, sobald Backlog-Einträge nicht mehr als reguläre Tasks mitgezählt werden. Explizit als möglicher späterer Anforderungs-Change festgehalten, kein aktueller Widerspruch zu REVIEW-FUNC-003.
+
 ## Nächster Schritt
 
 Schritt 7: Regelbasiertes Reply-Parsing (REVIEW-FUNC-004, 005) — der Worker fragt per IMAP/POP3 gezielt nach Antworten auf die referenzierte Mail und extrahiert die Top-3-Priorisierung aus der Antwort.

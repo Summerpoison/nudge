@@ -51,12 +51,21 @@ def next_checkpoint(task: dict) -> str:
     return task["buffer_deadline"]
 
 
+TASKS_PER_BLOCK = 5
+
+
 def build_review_email(tasks: list[dict]) -> MIMEText:
     task_ids = ",".join(str(task["id"]) for task in tasks)
     subject = f"Nudge Weekly Review [ids: {task_ids}]"
 
+    # tasks arrive sorted by urgency (core-app orders /api/tasks by buffer
+    # deadline), so grouping them in fixed-size blocks as-is means each
+    # block is also roughly a tier of urgency, not an arbitrary chunk.
     lines = ["Here are your currently open tasks:", ""]
-    for task in tasks:
+    for index, task in enumerate(tasks):
+        if index > 0 and index % TASKS_PER_BLOCK == 0:
+            lines.append("-" * 30)
+            lines.append("")
         lines.append(f"#{task['id']} — {task['name']}")
         lines.append(f"    Status: {task['status']}")
         lines.append(f"    Next checkpoint: {format_date(next_checkpoint(task))}")
