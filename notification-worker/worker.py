@@ -1,4 +1,8 @@
+import email
+import email.policy
 import json
+import poplib
+import re
 import smtplib
 import sys
 import time
@@ -18,6 +22,22 @@ SMTP_PORT = 1025
 FROM_ADDRESS = "nudge@localhost"
 TO_ADDRESS = "user@localhost"
 REVIEW_EMAIL_INTERVAL_SECONDS = 60  # stands in for "weekly" during local testing
+
+# Mailpit has no IMAP server (confirmed via `mailpit --help`) — only SMTP,
+# POP3, and its own REST API. REVIEW-FUNC-004/REVIEW-NFR-001 name IMAP
+# specifically, but poplib is the closest available stdlib equivalent that
+# still talks a real mail-retrieval protocol to a real server rather than a
+# REST mock. See docs/how-to-run-and-test-locally.md for how to enable
+# Mailpit's POP3 server with matching credentials.
+POP3_HOST = "localhost"
+POP3_PORT = 1110
+POP3_USERNAME = "nudge"
+POP3_PASSWORD = "nudge-local-test"
+
+REVIEW_SUBJECT_PATTERN = re.compile(r"Nudge Weekly Review \[ids: ([\d,]+)\]")
+TOP_PRIORITY_COUNT = 3
+
+processed_reply_uids: set[str] = set()
 
 
 def log(message: str) -> None:
@@ -96,6 +116,75 @@ def send_review_email(tasks: list[dict]) -> None:
     log(f"Sent weekly review email ({len(tasks)} task(s)), subject: {message['Subject']}")
 
 
+def parse_top_priorities(body: str, valid_ids: set[int]) -> list[int]:
+    priorities: list[int] = []
+    for match in re.finditer(r"#?\b(\d+)\b", body):
+        candidate = int(match.group(1))
+        if candidate in valid_ids and candidate not in priorities:
+            priorities.append(candidate)
+        if len(priorities) == TOP_PRIORITY_COUNT:
+            break
+    return priorities
+
+
+def check_for_replies() -> None:
+    try:
+        conn = poplib.POP3(POP3_HOST, POP3_PORT, timeout=5)
+        conn.user(POP3_USERNAME)
+        conn.pass_(POP3_PASSWORD)
+    except (OSError, poplib.error_proto) as error:
+        log(f"Could not check for replies via POP3 at {POP3_HOST}:{POP3_PORT}: {error}")
+        return
+
+    try:
+        _, uidl_lines, _ = conn.uidl()
+        for line in uidl_lines:
+            msg_num_str, uid = line.decode().split(" ", 1)
+            if uid in processed_reply_uids:
+                continue
+            msg_num = int(msg_num_str)
+
+            # REVIEW-FUNC-004: only ever act on replies to our own
+            # referenced thread — TOP fetches headers only (0 body lines)
+            # so we can check the subject before pulling the full message.
+            _, header_lines, _ = conn.top(msg_num, 0)
+            headers = email.message_from_bytes(
+                b"\r\n".join(header_lines), policy=email.policy.default
+            )
+            subject = headers.get("Subject", "")
+
+            # Mailpit catches everything the worker sends AND receives in
+            # one shared mailbox (no separate "Sent" folder like a real
+            # account), so the review email we just sent would otherwise
+            # match its own reference pattern. Requiring "Re:" is what
+            # actually distinguishes an incoming reply from our own
+            # outgoing message in this local setup.
+            is_reply = subject.strip().lower().startswith("re:")
+            match = REVIEW_SUBJECT_PATTERN.search(subject)
+            if not is_reply or not match:
+                processed_reply_uids.add(uid)
+                continue
+
+            valid_ids = {int(x) for x in match.group(1).split(",")}
+
+            _, full_lines, _ = conn.retr(msg_num)
+            full_message = email.message_from_bytes(
+                b"\r\n".join(full_lines), policy=email.policy.default
+            )
+            body_part = full_message.get_body(preferencelist=("plain",))
+            body_text = body_part.get_content() if body_part else ""
+
+            priorities = parse_top_priorities(body_text, valid_ids)
+            processed_reply_uids.add(uid)
+
+            if priorities:
+                log(f"Reply to '{subject}' parsed top priorities: {priorities}")
+            else:
+                log(f"Reply to '{subject}' matched but no valid task IDs found in the body")
+    finally:
+        conn.quit()
+
+
 def run() -> None:
     log(f"notification-worker started, polling {CORE_APP_URL} every {POLL_INTERVAL_SECONDS}s")
     last_review_sent = None
@@ -111,6 +200,7 @@ def run() -> None:
                 send_review_email(tasks)
                 last_review_sent = now
 
+        check_for_replies()
         time.sleep(POLL_INTERVAL_SECONDS)
 
 
