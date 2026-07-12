@@ -35,7 +35,7 @@
 - [ ] **REVIEW-FUNC-008** (Must) — Reminder/aktive Benachrichtigungen beziehen sich AUSSCHLIESSLICH auf die aktuell committeten Fokus-Tasks, nicht auf alle Tasks im System.
 - [ ] **REVIEW-FUNC-009** (Should) — Sind alle Fokus-Tasks vor Zyklusende erledigt, bietet das System eine vorzeitige Neu-Priorisierung an, erzwingt sie aber nicht.
 - [x] **REVIEW-NFR-001** (Must) — Der Worker nutzt für SMTP/IMAP ausschließlich Python-Standardbibliothek (`smtplib`, `imaplib`) — keine externen E-Mail-Abhängigkeiten. *(`smtplib` wie spezifiziert; für den Empfang `poplib` statt `imaplib` — ebenfalls Standardbibliothek, siehe REVIEW-FUNC-004-Anmerkung. Keine externe Abhängigkeit in beiden Fällen.)*
-- [ ] **REVIEW-NFR-002** (Must) — Kern-App und Worker sind unabhängig voneinander lauffähig: Ausfall eines Prozesses darf den anderen nicht zum Absturz bringen (nachgewiesen durch manuellen Test, siehe `00-tooling-and-process-independence.md`). *(Mechanismus bereits in Schritt 5 informell verifiziert; formaler Nachweis mit Screenshot/GIF folgt in Schritt 9.)*
+- [ ] **REVIEW-NFR-002** (Must) — Kern-App und Worker sind unabhängig voneinander lauffähig: Ausfall eines Prozesses darf den anderen nicht zum Absturz bringen (nachgewiesen durch manuellen Test, siehe `00-tooling-and-process-independence.md`). *(Textueller Nachweis in Schritt 9 abgeschlossen, siehe `12-step9-process-independence-proof.md` — vollständiges Log-Transkript beider Ausfallrichtungen. Nur das für die Abgabe geforderte visuelle Material (Screenshot/GIF) steht noch aus, daher hier bewusst noch unchecked.)*
 
 ## ESC — Eisenhower-Filter & Eskalation (Teil C, Erweiterung)
 
