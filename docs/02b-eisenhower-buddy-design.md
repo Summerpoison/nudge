@@ -25,6 +25,13 @@
 
 **Begründung:** Hält die Kognitionslast konstant unabhängig von der Gesamtzahl der Tasks im System (5 oder 50 macht keinen Unterschied).
 
+**Nachtrag (Schritt 10c, Review nach Fertigstellung des Buddy-Systems):** Diese Begrenzung gilt nachweislich für *häufige, routinemäßige* Benachrichtigungen — konkret den noch nicht gebauten täglichen Checkpoint-Digest (REVIEW-FUNC-007). Bei genauerer Betrachtung passt sie nicht auf den Buddy-Alert (ESC-FUNC-004) selbst:
+
+- Der Weekly-Review-Mail (Schritt 6) lag ohnehin nie unter dieser Regel — sie ist die Bestandsaufnahme, aus der die Fokus-Tasks überhaupt erst ausgewählt werden, und muss deshalb zwangsläufig alle aktiven Tasks zeigen.
+- Der Buddy-Alert ist durch seine eigene Auslöseregel (`needs_buddy_alert()`, siehe `15-step10c-buddy-system.md`) bereits selbstbegrenzend: er feuert nur, wenn beide Checkpoints je über ihr eigenes 24h-Gnadenfenster hinweg ohne Interaktion verstrichen sind, oder die Buffer-Deadline überschritten ist — ein seltenes, gravierendes Ereignis, kein routinemäßiger Reminder. Würde man ihn zusätzlich auf Fokus-Tasks beschränken, entstünde eine blinde Stelle: ein Task, der beide Checkpoints komplett verpasst, bliebe folgenlos, nur weil er diese Woche nicht zu den drei gewählten Fokus-Tasks gehörte — genau das Szenario, für das der Buddy eigentlich gedacht ist.
+
+**Entscheidung (mit Nutzerin abgestimmt):** Buddy-Alerts laufen bewusst über alle aktiven Tasks, nicht nur Fokus-Tasks — aktueller Code-Zustand ist bereits korrekt, keine Änderung nötig. Die Fokus-Tasks-only-Einschränkung bleibt für REVIEW-FUNC-007 (täglicher Digest) reserviert, sobald der gebaut wird.
+
 ## 4. Kein Zwang bei freien Slots
 
 **Szenario:** Nutzer erledigt alle drei Fokus-Tasks vorzeitig (z.B. Dienstag).

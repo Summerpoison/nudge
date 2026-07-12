@@ -126,6 +126,10 @@ Manuell gegen Mailpit getestet (Kern-App, Worker und Mailpit lokal gestartet, Bu
 8. Mit demselben Ad-hoc-Check-in-Event (Checkpoint 1 jetzt "checked_in") blieb `needs_buddy_alert` für "Fix login bug" weiterhin `True`, weil die Buffer-Deadline bereits überschritten ist — bestätigt, dass der Override Vorrang vor dem Checkpoint-Status hat.
 9. Alle Testtasks/-events wieder entfernt, Datenbank mit `seed_data.py` neu geseedet für einen sauberen Zustand.
 
+## Nachtrag: Buddy-Alert bewusst NICHT auf Fokus-Tasks beschränkt
+
+REVIEW-FUNC-008 verlangt, dass "Reminder/aktive Benachrichtigungen" ausschließlich auf Fokus-Tasks laufen. Beim Review nach Fertigstellung dieses Schritts wurde geklärt, dass diese Regel nicht auf den Buddy-Alert passt: `needs_buddy_alert()` ist bereits durch die eigene Auslöseregel selbstbegrenzend (beide Checkpoints über ihr eigenes Gnadenfenster hinweg verpasst, oder Buffer-Deadline überschritten — selten, gravierend). Eine zusätzliche Fokus-Tasks-Beschränkung würde eine blinde Stelle erzeugen: ein Task, der beide Checkpoints komplett verpasst, aber diese Woche nicht zu den drei gewählten Fokus-Tasks gehört, bliebe sonst folgenlos. Buddy-Alerts laufen daher weiterhin bewusst über alle aktiven Tasks — aktueller Code ist bereits korrekt, keine Änderung nötig. Volle Begründung in `02b-eisenhower-buddy-design.md`, Nachtrag zu Abschnitt 3.
+
 ## Nächster Schritt
 
-Kein weiterer Schritt in der ursprünglichen Schritt-10-Aufteilung offen (10a Dashboard/Eisenhower, 10b Settings, 10c Buddy-System — alle drei abgeschlossen). Verbleibende, bewusst zurückgestellte Punkte stehen in `backlog.md` (u. a. Sortier-/Gruppier-Toolbar für All-Tasks, jetzt freigegeben, da 10c abgeschlossen ist).
+Kein weiterer Schritt in der ursprünglichen Schritt-10-Aufteilung offen (10a Dashboard/Eisenhower, 10b Settings, 10c Buddy-System — alle drei abgeschlossen). Verbleibende, bewusst zurückgestellte Punkte stehen in `backlog.md` (u. a. Sortier-/Gruppier-Toolbar für All-Tasks, jetzt freigegeben, da 10c abgeschlossen ist). REVIEW-FUNC-007 (täglicher Checkpoint-Digest, Fokus-Tasks-only) und REVIEW-FUNC-009 (vorzeitige Neu-Priorisierung) bleiben die offenen Should-Punkte im REVIEW-Modul.
