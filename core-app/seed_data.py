@@ -1,7 +1,9 @@
 """Wipe core-app's database and repopulate it with a small, realistic
-test dataset covering the states the UI needs to show: a plain active
-task, one past its first checkpoint, one on hold, one done, and one
-marked as this week's focus task.
+test dataset covering the states the UI needs to show: plain active
+tasks, one past its first checkpoint, one in the checkpoint grace
+window, on-hold tasks (triaged and untriaged), a done task, focus
+tasks, and overdue tasks at each stage of buddy escalation (pending
+and already alerted).
 
 nudge.db and core-app/uploads/ are throwaway local artifacts (both
 gitignored) -- safe to re-run any time you want a clean, predictable
@@ -19,14 +21,17 @@ from models import calculate_buffer_deadline, calculate_checkpoints
 from uploads import UPLOAD_DIR, task_upload_dir
 
 
-def seed_task(conn, name, created_at, external_deadline, status="active", is_focus_task=False):
+def seed_task(
+    conn, name, created_at, external_deadline, status="active", is_focus_task=False, buddy_alerted=False
+):
     buffer_deadline = calculate_buffer_deadline(created_at, external_deadline)
     checkpoint_1, checkpoint_2 = calculate_checkpoints(created_at, buffer_deadline)
     cursor = conn.execute(
         """
         INSERT INTO tasks
-            (name, created_at, external_deadline, buffer_deadline, checkpoint_1, checkpoint_2, status, is_focus_task)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            (name, created_at, external_deadline, buffer_deadline, checkpoint_1, checkpoint_2, status,
+             is_focus_task, buddy_alerted)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             name,
@@ -37,6 +42,7 @@ def seed_task(conn, name, created_at, external_deadline, status="active", is_foc
             checkpoint_2.isoformat(),
             status,
             1 if is_focus_task else 0,
+            1 if buddy_alerted else 0,
         ),
     )
     return cursor.lastrowid
@@ -116,15 +122,61 @@ def main():
         conn, focus_id, "marked_focus_task", "Marked as a focus task for this week", now - timedelta(hours=2)
     )
 
+    seed_task(
+        conn,
+        "Update onboarding docs",
+        created_at=now - timedelta(days=8),
+        external_deadline=now + timedelta(days=15),
+        is_focus_task=True,
+    )
+
+    seed_task(
+        conn,
+        "Sort out laptop replacement",
+        created_at=now - timedelta(days=2),
+        external_deadline=now + timedelta(days=14),
+        status="on_hold",
+    )
+
+    seed_task(
+        conn,
+        "Migrate reporting queries",
+        created_at=now - timedelta(days=3),
+        external_deadline=now + timedelta(days=5),
+    )
+
+    seed_task(
+        conn,
+        "Submit conference talk abstract",
+        created_at=now - timedelta(days=20),
+        external_deadline=now - timedelta(days=1),
+    )
+
+    escalated_id = seed_task(
+        conn,
+        "Refactor auth middleware",
+        created_at=now - timedelta(days=15),
+        external_deadline=now - timedelta(days=2),
+        buddy_alerted=True,
+    )
+    seed_event(
+        conn, escalated_id, "buddy_alert_sent", "Buddy notified: task needs attention", now - timedelta(days=1)
+    )
+
     conn.commit()
     conn.close()
 
-    print("Seeded 5 test tasks:")
-    print("  1. Write research proposal   -- active, no checkpoint due")
-    print("  2. Fix login bug             -- active, checkpoint reached")
-    print("  3. Review PR feedback        -- on hold")
-    print("  4. Draft Q4 report           -- done, has an attachment")
-    print("  5. Prepare oral exam slides  -- focus task, checkpoint reached")
+    print("Seeded 10 test tasks:")
+    print("  1. Write research proposal        -- active, no checkpoint due")
+    print("  2. Fix login bug                  -- active, checkpoint reached")
+    print("  3. Review PR feedback             -- on hold, triage draft sent")
+    print("  4. Draft Q4 report                -- done, has an attachment")
+    print("  5. Prepare oral exam slides       -- focus task, checkpoint reached")
+    print("  6. Update onboarding docs         -- second focus task, no checkpoint due")
+    print("  7. Sort out laptop replacement    -- on hold, not yet triaged")
+    print("  8. Migrate reporting queries      -- active, checkpoint 1 missed (in grace window)")
+    print("  9. Submit conference talk abstract -- active, overdue, buddy alert pending")
+    print(" 10. Refactor auth middleware       -- active, overdue, buddy already alerted")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,67 @@
+Hey, please create a prototype for a productivity tool called "Nudge". 
+
+The tool itself is focused on the idea that tasks/to-do's are dumped into it and the tool then does the thinking on priotization, based on the deadline. At certain intervalls (eg 50% of deadline time passed) the tool does a "check in" with the user, who then needs to submit proof they worked/are working on the task. The user can skip this, but needs to provide a reason. The system offers an e-mail draft depending on the reason (eg help request to designated coworker) to make completing the task easier/achivable.
+
+The MVP loop is:
+1. Task exists with a real deadline
+2. System auto-calculates buffer deadline and checkpoints
+3. At checkpoint: show proof OR tell me what's blocking you (triage menu)
+4. System drafts whatever message the triage answer implies (help request, extension, follow-up)
+5. You hit send
+
+Visually Nudge is centered around a minimalistic and clean aestethic. It should feel light and airy with clear to-do markers and an easy way to switch views -- no complex menus and intentional elements.
+
+Colorpalette 1:
+#EEEEEE
+#6FCF97
+#2FA084
+#1F6F5F
+
+Colorpalette 2:
+#1A312C
+#428475
+#89D7B7
+#FFF4E1
+
+Colorpalette 3:
+#FBF5DD
+#E7E1B1
+#306D29
+#0D530E
+
+Is there anything else you need?
+
+---
+
+I've designed the core prototype for Nudge, focusing on a light, airy, and supportive productivity experience using Palette 1.
+Design Rationale:
+
+    Calm Prioritization: I used a "zen" aesthetic with soft greens and plenty of whitespace to reduce the anxiety typically associated with task lists.
+    Supportive Interventions: The check-in and triage flows are designed as gentle "nudges" rather than demands. The triage system proactively drafts emails to remove the friction of asking for help or extensions.
+    Minimalist Layout: Navigation is kept simple with a focused sidebar, ensuring the user stays focused on their current tasks without menu clutter.
+
+Screens Produced:
+
+    Task Inbox: A simple "dump" interface for entering tasks with deadlines.
+    Main Dashboard: Displays prioritized tasks with system-calculated checkpoints and "Nudge" statuses.
+    Check-in Interface: A focused moment for users to provide progress or admit they are stuck.
+    Smart Triage & Action: Automatically drafts communication based on blockers, turning a stressful moment into a simple click-to-send action.
+
+How does this flow feel to you? Would you like to refine the email drafting interface or perhaps explore a dark mode version (Palette 2)?
+
+---
+
+I like the check-in, but the dashboard is not coherent with your reply. Absolutely no statistics or visible deadlines or "remaining time until X".
+
+Very clean layout, lots of whitespace and no unnecessary clutter.
+
+---
+
+I've completely redesigned the dashboard to align with a more serene, "Zen" philosophy. All timers, progress bars, and statistics have been removed to eliminate the pressure of "watching the clock."
+Key Changes:
+
+    Minimalist Task Display: The primary focus is now on the task content itself, removing all countdowns and percentage markers.
+    Whitespace-First Layout: I've increased padding and simplified the grid to create a more "light and airy" feel, ensuring the interface breathes.
+    Qualitative Focus: Instead of showing numerical data, the dashboard now uses subtle icons and clear typography to guide your attention without adding cognitive load.
+
+Does this cleaner, more focused direction feel better for your daily workflow?
