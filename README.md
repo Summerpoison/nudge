@@ -32,6 +32,22 @@ The current implementation includes:
 
 The scoped requirements and their completion status live in [docs/03-mvp-requirements-checklist.md](docs/03-mvp-requirements-checklist.md).
 
+## Screenshots
+
+**All Tasks** — grouped into Urgent, Not Urgent, and On Hold & Done, with a List view toggle.
+
+![All Tasks view, grouped by urgency](screenshots/All-Tasks-Nudge.png)
+
+**Single Task** — checkpoint dates with an at-a-glance check-in status (missed, grace period, or checked in).
+
+![Single task detail view with checkpoint status icons](screenshots/Single-Task-Nudge.png)
+
+**Blocker Triage** — a pre-filled, editable message draft after choosing a blocker reason, sent via the user's own mail client.
+
+![Blocker triage message draft template](screenshots/Blocker-Triage-Template-Nudge.png)
+
+More screens (Dashboard, Settings, the triage reason picker) are in [screenshots/](screenshots/).
+
 ## Planned and upcoming work
 
 The backlog contains intentionally deferred ideas rather than unfinished MVP work. Notable next steps include:
@@ -60,8 +76,8 @@ nudge/
 │   └── requirements.txt      Worker dependencies (currently standard library only)
 ├── design-reference/         Google Stitch exports and visual inspiration
 ├── docs/                     Requirements, build decisions, and test notes
-│   └── GenAI/                Exported AI conversations, prompts, and workflow history
-├── google_stitch_prompts.txt Original prompts used for Stitch exploration
+│   └── GenAI/                Exported AI conversations, Stitch prompts, and workflow history
+├── screenshots/              Screens of the finished app
 └── README.md                 This overview
 ```
 
