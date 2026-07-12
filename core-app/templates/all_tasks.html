@@ -1,42 +1,122 @@
 {% extends "base.html" %}
 {% block title %}All Tasks | Nudge{% endblock %}
 {% block content %}
-<h2 class="font-display font-bold text-3xl mb-8">All Tasks</h2>
+{% macro task_row(task) %}
+<a href="{{ url_for('task_detail', task_id=task.id) }}"
+   class="flex justify-between items-center bg-surface rounded-lg px-5 py-4 hover:shadow-sm transition-shadow">
+    <div class="flex items-center gap-3">
+        <span class="font-medium">{{ task.name }}</span>
+        {% if task.is_focus_task %}
+        <span class="text-xs uppercase tracking-wide px-2 py-0.5 rounded-full bg-accent text-white flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">flag</span>
+            Focus
+        </span>
+        {% endif %}
+        <span class="text-xs uppercase tracking-wide px-2 py-0.5 rounded-full
+            {{ 'bg-primary/30' if task.status == 'active' else 'bg-black/10 text-text/60' }}">
+            {{ task.status.replace('_', ' ') }}
+        </span>
+    </div>
+    <span class="text-sm text-text/60">{{ task.buffer_deadline|friendly_date }}</span>
+</a>
+{% endmacro %}
 
-<div class="flex flex-col gap-3 mb-10 max-w-2xl">
-    {% for task in tasks %}
-    <a href="{{ url_for('task_detail', task_id=task.id) }}"
-       class="flex justify-between items-center bg-surface rounded-lg px-5 py-4 hover:shadow-sm transition-shadow">
-        <div class="flex items-center gap-3">
-            <span class="font-medium">{{ task.name }}</span>
-            {% if task.is_focus_task %}
-            <span class="text-xs uppercase tracking-wide px-2 py-0.5 rounded-full bg-accent text-white flex items-center gap-1">
-                <span class="material-symbols-outlined text-[14px]">flag</span>
-                Focus
-            </span>
-            {% endif %}
-            <span class="text-xs uppercase tracking-wide px-2 py-0.5 rounded-full
-                {{ 'bg-primary/30' if task.status == 'active' else 'bg-black/10 text-text/60' }}">
-                {{ task.status.replace('_', ' ') }}
-            </span>
+<div class="flex items-center justify-between mb-8">
+    <h2 class="font-display font-bold text-3xl">All Tasks</h2>
+    <div class="flex bg-surface rounded-lg p-1 gap-1">
+        <button type="button" onclick="showView('grouped')" id="grouped-toggle"
+                class="px-4 py-1.5 text-sm font-semibold rounded-md transition-colors bg-accent text-white">
+            Grouped
+        </button>
+        <button type="button" onclick="showView('list')" id="list-toggle"
+                class="px-4 py-1.5 text-sm font-semibold rounded-md transition-colors text-text/60">
+            List
+        </button>
+    </div>
+</div>
+
+<div id="grouped-view" class="flex flex-col gap-8 mb-10 max-w-2xl">
+    <div>
+        <h3 class="text-xs uppercase tracking-widest text-text/60 font-semibold mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            Urgent
+        </h3>
+        <div class="flex flex-col gap-3">
+            {% for task in urgent_tasks %}
+            {{ task_row(task) }}
+            {% else %}
+            <p class="text-text/50 text-sm">Nothing urgent right now.</p>
+            {% endfor %}
         </div>
-        <span class="text-sm text-text/60">{{ task.buffer_deadline|friendly_date }}</span>
-    </a>
+    </div>
+    <div>
+        <h3 class="text-xs uppercase tracking-widest text-text/60 font-semibold mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-primary"></span>
+            Not Urgent
+        </h3>
+        <div class="flex flex-col gap-3">
+            {% for task in not_urgent_tasks %}
+            {{ task_row(task) }}
+            {% else %}
+            <p class="text-text/50 text-sm">Nothing here.</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% if other_tasks %}
+    <div class="opacity-70">
+        <h3 class="text-xs uppercase tracking-widest text-text/60 font-semibold mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-black/30"></span>
+            On Hold &amp; Done
+        </h3>
+        <div class="flex flex-col gap-3">
+            {% for task in other_tasks %}
+            {{ task_row(task) }}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div id="list-view" class="hidden flex-col gap-3 mb-10 max-w-2xl">
+    {% for task in tasks %}
+    {{ task_row(task) }}
     {% else %}
-    <p class="text-text/60">No tasks yet — add your first one below.</p>
+    <p class="text-text/60">No tasks yet — add your first one from the Dashboard.</p>
     {% endfor %}
 </div>
 
 <section class="bg-surface rounded-xl p-6 max-w-md">
-    <h3 class="font-display font-semibold text-lg mb-4">Add a task</h3>
-    <form method="post" action="{{ url_for('all_tasks') }}" class="flex flex-col gap-4">
-        <input type="text" name="name" placeholder="Task name" required
-               class="border-b border-black/20 focus:border-primary outline-none py-2 bg-transparent">
-        <input type="datetime-local" name="external_deadline" required
-               class="border-b border-black/20 focus:border-primary outline-none py-2 bg-transparent">
-        <button type="submit" class="bg-accent text-white font-semibold px-6 py-3 rounded-lg self-start">
-            Add Task
-        </button>
-    </form>
+    <h3 class="font-display font-semibold text-lg mb-2">Looking for "Add a task"?</h3>
+    <p class="text-sm text-text/60">
+        It now lives on the <a href="{{ url_for('dashboard') }}" class="text-accent hover:underline">Dashboard</a>.
+        This page is your backlog — a full view of everything open, grouped by urgency.
+    </p>
 </section>
+
+<script>
+    function showView(view) {
+        const grouped = document.getElementById('grouped-view');
+        const list = document.getElementById('list-view');
+        const groupedToggle = document.getElementById('grouped-toggle');
+        const listToggle = document.getElementById('list-toggle');
+        const active = ['bg-accent', 'text-white'];
+        const inactive = ['text-text/60'];
+
+        if (view === 'grouped') {
+            grouped.classList.remove('hidden');
+            list.classList.add('hidden');
+            groupedToggle.classList.add(...active);
+            groupedToggle.classList.remove(...inactive);
+            listToggle.classList.remove(...active);
+            listToggle.classList.add(...inactive);
+        } else {
+            list.classList.remove('hidden');
+            grouped.classList.add('hidden');
+            listToggle.classList.add(...active);
+            listToggle.classList.remove(...inactive);
+            groupedToggle.classList.remove(...active);
+            groupedToggle.classList.add(...inactive);
+        }
+    }
+</script>
 {% endblock %}

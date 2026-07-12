@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from db import get_connection
 
 BUFFER_RATIO = 0.7
 CHECKPOINT_1_RATIO = 0.5
 CHECKPOINT_2_RATIO = 0.75
+URGENT_THRESHOLD_DAYS = 3
 
 
 def calculate_buffer_deadline(created_at: datetime, external_deadline: datetime) -> datetime:
@@ -113,6 +114,13 @@ def is_checkpoint_due(task: dict) -> bool:
     checkpoint_1 = datetime.fromisoformat(task["checkpoint_1"])
     checkpoint_2 = datetime.fromisoformat(task["checkpoint_2"])
     return now >= checkpoint_1 or now >= checkpoint_2
+
+
+def is_urgent(task: dict) -> bool:
+    if task["status"] != "active":
+        return False
+    buffer_deadline = datetime.fromisoformat(task["buffer_deadline"])
+    return buffer_deadline - datetime.now() < timedelta(days=URGENT_THRESHOLD_DAYS)
 
 
 def set_focus_tasks(task_ids: list[int]) -> list[int]:

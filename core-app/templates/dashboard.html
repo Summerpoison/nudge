@@ -27,7 +27,7 @@
 <p class="text-text/60 mb-10">No active tasks yet. Add one from All Tasks.</p>
 {% endif %}
 
-<section>
+<section class="mb-10">
     <h3 class="font-display font-semibold text-lg mb-4">Other open tasks</h3>
     <div class="flex flex-col gap-3 max-w-2xl">
         {% for task in other_tasks %}
@@ -48,5 +48,18 @@
         <p class="text-text/50">Nothing else on deck right now.</p>
         {% endfor %}
     </div>
+</section>
+
+<section class="bg-surface rounded-xl p-6 max-w-md">
+    <h3 class="font-display font-semibold text-lg mb-4">Add a task</h3>
+    <form method="post" action="{{ url_for('all_tasks') }}" class="flex flex-col gap-4">
+        <input type="text" name="name" placeholder="Task name" required
+               class="border-b border-black/20 focus:border-primary outline-none py-2 bg-transparent">
+        <input type="datetime-local" name="external_deadline" required
+               class="border-b border-black/20 focus:border-primary outline-none py-2 bg-transparent">
+        <button type="submit" class="bg-accent text-white font-semibold px-6 py-3 rounded-lg self-start">
+            Add Task
+        </button>
+    </form>
 </section>
 {% endblock %}

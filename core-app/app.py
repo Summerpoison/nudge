@@ -12,6 +12,7 @@ from models import (
     get_task,
     get_task_events,
     is_checkpoint_due,
+    is_urgent,
     set_focus_tasks,
     update_task_status,
 )
@@ -52,8 +53,19 @@ def all_tasks():
         name = request.form["name"]
         external_deadline = datetime.fromisoformat(request.form["external_deadline"])
         create_task(name, external_deadline)
-        return redirect(url_for("all_tasks"))
-    return render_template("all_tasks.html", tasks=get_all_tasks())
+        return redirect(url_for("dashboard"))
+
+    tasks = get_all_tasks()
+    urgent_tasks = [t for t in tasks if t["status"] == "active" and is_urgent(t)]
+    not_urgent_tasks = [t for t in tasks if t["status"] == "active" and not is_urgent(t)]
+    other_tasks = [t for t in tasks if t["status"] != "active"]
+    return render_template(
+        "all_tasks.html",
+        tasks=tasks,
+        urgent_tasks=urgent_tasks,
+        not_urgent_tasks=not_urgent_tasks,
+        other_tasks=other_tasks,
+    )
 
 
 @app.route("/tasks/<int:task_id>")
