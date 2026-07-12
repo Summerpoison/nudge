@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Check In: {{ task.name }} | Nudge{% endblock %}
+{% block content %}
+<a href="{{ url_for('task_detail', task_id=task.id) }}" class="text-sm text-text/60 hover:text-text mb-6 inline-block">
+    &larr; Back to Task
+</a>
+
+<div class="max-w-2xl">
+    <p class="text-xs uppercase tracking-widest text-text/60 mb-2">Checkpoint check-in</p>
+    <h2 class="font-display font-bold text-3xl mb-8">How's it going with "{{ task.name }}"?</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section class="bg-surface rounded-xl p-8 flex flex-col gap-3">
+            <span class="material-symbols-outlined text-accent text-3xl">upload_file</span>
+            <h3 class="font-display font-semibold text-lg">Submit Proof</h3>
+            <p class="text-sm text-text/60 mb-2">Upload your progress or a finished draft.</p>
+            <form method="post" action="{{ url_for('upload_attachment', task_id=task.id) }}"
+                  enctype="multipart/form-data" class="flex flex-col gap-3">
+                <label for="checkin-artifact-input"
+                       class="flex items-center justify-center gap-2 border border-accent text-accent font-semibold py-2 rounded-lg cursor-pointer hover:bg-accent/5 transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">attach_file</span>
+                    <span id="checkin-artifact-label-text">Choose File</span>
+                </label>
+                <input type="file" name="artifact" id="checkin-artifact-input" required class="hidden">
+                <button type="submit" class="bg-accent text-white font-semibold py-2 rounded-lg">
+                    Submit Proof
+                </button>
+            </form>
+        </section>
+
+        <a href="{{ url_for('triage', task_id=task.id) }}"
+           class="bg-surface rounded-xl p-8 flex flex-col gap-3 hover:shadow-sm transition-shadow">
+            <span class="material-symbols-outlined text-red-500 text-3xl">report</span>
+            <h3 class="font-display font-semibold text-lg">I'm Blocked</h3>
+            <p class="text-sm text-text/60">Need help, waiting on someone, or the scope changed?</p>
+        </a>
+    </div>
+</div>
+<script>
+    const checkinArtifactInput = document.getElementById('checkin-artifact-input');
+    const checkinArtifactLabelText = document.getElementById('checkin-artifact-label-text');
+    checkinArtifactInput.addEventListener('change', () => {
+        if (checkinArtifactInput.files.length) {
+            checkinArtifactLabelText.textContent = checkinArtifactInput.files[0].name;
+        }
+    });
+</script>
+{% endblock %}

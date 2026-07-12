@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Blocker Triage: {{ task.name }} | Nudge{% endblock %}
+{% block content %}
+<a href="{{ url_for('checkin', task_id=task.id) }}" class="text-sm text-text/60 hover:text-text mb-6 inline-block">
+    &larr; Back to Check-in
+</a>
+
+<div class="max-w-2xl">
+    <p class="text-xs uppercase tracking-widest text-text/60 mb-2">Blocker triage</p>
+    <h2 class="font-display font-bold text-3xl mb-8">What's stopping you on "{{ task.name }}"?</h2>
+
+    <form method="post" action="{{ url_for('start_timer', task_id=task.id) }}" class="mb-6">
+        <button type="submit"
+                class="w-full flex items-center justify-center gap-2 bg-accent text-white font-semibold py-4 rounded-lg">
+            <span class="material-symbols-outlined">timer</span>
+            Start 10-Minute Timer to get started now
+        </button>
+    </form>
+
+    <div class="grid grid-cols-1 gap-4 mb-8">
+        <button type="button" onclick="selectReason('stuck')"
+                class="flex items-center gap-4 bg-surface rounded-lg p-5 text-left hover:shadow-sm transition-shadow">
+            <span class="material-symbols-outlined text-accent">groups</span>
+            <div>
+                <h4 class="font-semibold">Stuck / need help</h4>
+                <p class="text-sm text-text/60">Draft a quick ask for a second pair of eyes.</p>
+            </div>
+        </button>
+        <button type="button" onclick="selectReason('waiting')"
+                class="flex items-center gap-4 bg-surface rounded-lg p-5 text-left hover:shadow-sm transition-shadow">
+            <span class="material-symbols-outlined text-accent">hourglass_empty</span>
+            <div>
+                <h4 class="font-semibold">Waiting on someone</h4>
+                <p class="text-sm text-text/60">Draft a gentle follow-up nudge.</p>
+            </div>
+        </button>
+        <button type="button" onclick="selectReason('scope')"
+                class="flex items-center gap-4 bg-surface rounded-lg p-5 text-left hover:shadow-sm transition-shadow">
+            <span class="material-symbols-outlined text-accent">rule</span>
+            <div>
+                <h4 class="font-semibold">Scope or deadline problem</h4>
+                <p class="text-sm text-text/60">Draft a timeline renegotiation.</p>
+            </div>
+        </button>
+    </div>
+
+    <form method="post" action="{{ url_for('triage', task_id=task.id) }}"
+          id="draft-form" class="hidden bg-surface rounded-xl p-8 flex flex-col gap-4">
+        <input type="hidden" name="reason" id="reason-input">
+        <div>
+            <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">To</label>
+            <input type="email" name="recipient" id="recipient-input" required placeholder="name@example.com"
+                   class="w-full border-b border-black/20 focus:border-accent outline-none py-2 bg-transparent">
+        </div>
+        <div>
+            <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">Subject</label>
+            <input type="text" name="subject" id="subject-input" required
+                   class="w-full border-b border-black/20 focus:border-accent outline-none py-2 bg-transparent">
+        </div>
+        <div>
+            <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">Message</label>
+            <textarea name="body" id="body-input" rows="8" required
+                      class="w-full border border-black/20 focus:border-accent outline-none rounded-lg p-3 bg-transparent"></textarea>
+        </div>
+        <button type="submit" class="bg-accent text-white font-semibold py-3 rounded-lg">
+            Send &amp; Pause Task
+        </button>
+    </form>
+</div>
+<script>
+    const taskName = {{ task.name|tojson }};
+    const drafts = {
+        stuck: {
+            reason: "Stuck / need help",
+            subject: `Need a hand with: ${taskName}`,
+            body: `Hi,\n\nI've hit a blocker on "${taskName}" and could use a second pair of eyes. Do you have a few minutes to help me work through it?\n\nThanks!`,
+        },
+        waiting: {
+            reason: "Waiting on someone",
+            subject: `Following up: ${taskName}`,
+            body: `Hi,\n\nJust checking in — I'm still waiting on your input for "${taskName}" before I can move forward. Let me know if anything's blocking you on your end.\n\nThanks!`,
+        },
+        scope: {
+            reason: "Scope or deadline problem",
+            subject: `Timeline update: ${taskName}`,
+            body: `Hi,\n\nI wanted to flag that the scope or timeline for "${taskName}" is turning out to be bigger than initially estimated. Could we find a time to discuss adjusting the deadline?\n\nThanks!`,
+        },
+    };
+
+    function selectReason(key) {
+        const draft = drafts[key];
+        document.getElementById('reason-input').value = draft.reason;
+        document.getElementById('subject-input').value = draft.subject;
+        document.getElementById('body-input').value = draft.body;
+        document.getElementById('recipient-input').value = '';
+        document.getElementById('draft-form').classList.remove('hidden');
+        document.getElementById('draft-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.getElementById('draft-form').addEventListener('submit', () => {
+        const to = document.getElementById('recipient-input').value;
+        const subject = document.getElementById('subject-input').value;
+        const body = document.getElementById('body-input').value;
+        const mailto = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.open(mailto, '_blank');
+    });
+</script>
+{% endblock %}

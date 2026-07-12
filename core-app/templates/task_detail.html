@@ -15,6 +15,15 @@
                 </span>
             </div>
 
+            {% if task.status == 'active' %}
+            <a href="{{ url_for('checkin', task_id=task.id) }}"
+               class="w-full flex items-center justify-center gap-2 font-semibold px-4 py-2 rounded-lg mb-6
+                   {{ 'bg-accent text-white' if checkpoint_due else 'border border-accent text-accent' }}">
+                <span class="material-symbols-outlined text-[20px]">flag</span>
+                {{ 'Checkpoint reached — Check In' if checkpoint_due else 'Check In' }}
+            </a>
+            {% endif %}
+
             <dl class="grid grid-cols-2 gap-4 mb-6">
                 <div>
                     <dt class="uppercase text-xs tracking-wide font-semibold text-text/70 mb-1">External deadline</dt>
@@ -57,10 +66,8 @@
     </div>
 
     <div class="flex flex-col gap-6">
-        <section class="bg-surface rounded-xl p-6">
-            <h3 class="font-display font-semibold text-base mb-4">Status</h3>
+        <section class="bg-surface rounded-xl p-6 flex flex-col gap-6">
             {% if task.status == 'on_hold' %}
-            <p class="text-sm text-text/60 mb-4">This task is on hold.</p>
             <form method="post" action="{{ url_for('change_status', task_id=task.id) }}">
                 <input type="hidden" name="status" value="active">
                 <button type="submit" class="w-full bg-accent text-white font-semibold py-2 rounded-lg">
@@ -70,12 +77,11 @@
             {% elif task.status == 'active' %}
             <form method="post" action="{{ url_for('change_status', task_id=task.id) }}">
                 <input type="hidden" name="status" value="done">
-                <button type="submit" class="w-full bg-accent text-white font-semibold py-2 rounded-lg">
+                <button type="submit" class="w-full border border-accent text-accent font-semibold py-2 rounded-lg">
                     Mark Complete
                 </button>
             </form>
             {% elif task.status == 'done' %}
-            <p class="text-sm text-text/60 mb-4">Marked complete.</p>
             <form method="post" action="{{ url_for('change_status', task_id=task.id) }}">
                 <input type="hidden" name="status" value="active">
                 <button type="submit" class="w-full border border-accent text-accent font-semibold py-2 rounded-lg">
@@ -83,9 +89,8 @@
                 </button>
             </form>
             {% endif %}
-        </section>
 
-        <section class="bg-surface rounded-xl p-6">
+            <div class="border-t border-black/10 pt-6">
             <h3 class="font-display font-semibold text-base mb-4">Attachments</h3>
             <ul class="flex flex-col gap-2 mb-4 text-sm">
                 {% for filename in attachments %}
@@ -115,6 +120,7 @@
                     Submit Proof
                 </button>
             </form>
+            </div>
         </section>
     </div>
 </div>

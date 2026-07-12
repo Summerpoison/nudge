@@ -11,6 +11,7 @@ from models import (
     get_all_tasks,
     get_task,
     get_task_events,
+    is_checkpoint_due,
     update_task_status,
 )
 from uploads import delete_attachment, list_attachments, save_attachment, task_upload_dir
@@ -65,7 +66,47 @@ def task_detail(task_id):
         events=get_task_events(task_id),
         attachments=list_attachments(task_id),
         buffer_pct=buffer_progress_percent(task),
+        checkpoint_due=is_checkpoint_due(task),
     )
+
+
+@app.route("/tasks/<int:task_id>/checkin")
+def checkin(task_id):
+    task = get_task(task_id)
+    if task is None:
+        abort(404)
+    return render_template("checkin.html", task=task)
+
+
+@app.route("/tasks/<int:task_id>/triage", methods=["GET", "POST"])
+def triage(task_id):
+    task = get_task(task_id)
+    if task is None:
+        abort(404)
+    if request.method == "POST":
+        reason = request.form["reason"]
+        recipient = request.form["recipient"]
+        update_task_status(task_id, "on_hold")
+        add_task_event(task_id, "triage_draft_sent", f"Blocker triage ({reason}): draft sent to {recipient}")
+        return redirect(url_for("task_detail", task_id=task_id))
+    return render_template("triage.html", task=task)
+
+
+@app.route("/tasks/<int:task_id>/triage/timer", methods=["POST"])
+def start_timer(task_id):
+    task = get_task(task_id)
+    if task is None:
+        abort(404)
+    add_task_event(task_id, "sprint_started", "Started a 10-minute focus timer")
+    return redirect(url_for("focus_timer", task_id=task_id))
+
+
+@app.route("/tasks/<int:task_id>/timer")
+def focus_timer(task_id):
+    task = get_task(task_id)
+    if task is None:
+        abort(404)
+    return render_template("timer.html", task=task)
 
 
 @app.route("/tasks/<int:task_id>/upload", methods=["POST"])

@@ -106,3 +106,10 @@ def buffer_progress_percent(task: dict) -> int:
         return 100
     elapsed = (datetime.now() - created_at).total_seconds()
     return max(0, min(100, int(elapsed / window * 100)))
+
+
+def is_checkpoint_due(task: dict) -> bool:
+    now = datetime.now()
+    checkpoint_1 = datetime.fromisoformat(task["checkpoint_1"])
+    checkpoint_2 = datetime.fromisoformat(task["checkpoint_2"])
+    return now >= checkpoint_1 or now >= checkpoint_2

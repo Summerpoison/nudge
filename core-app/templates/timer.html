@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Focus Timer: {{ task.name }} | Nudge{% endblock %}
+{% block content %}
+<a href="{{ url_for('task_detail', task_id=task.id) }}" class="text-sm text-text/60 hover:text-text mb-6 inline-block">
+    &larr; Back to Task
+</a>
+
+<div class="max-w-md text-center mx-auto mt-10">
+    <p class="text-xs uppercase tracking-widest text-text/60 mb-2">Focus sprint</p>
+    <h2 class="font-display font-bold text-2xl mb-8">{{ task.name }}</h2>
+    <div id="timer-display" class="font-display font-bold text-6xl text-accent mb-8">10:00</div>
+    <p id="timer-message" class="text-text/60">Just get started — you can stop anytime.</p>
+</div>
+<script>
+    let secondsLeft = 10 * 60;
+    const display = document.getElementById('timer-display');
+    const message = document.getElementById('timer-message');
+
+    const interval = setInterval(() => {
+        secondsLeft -= 1;
+        const minutes = Math.floor(secondsLeft / 60);
+        const seconds = secondsLeft % 60;
+        display.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        if (secondsLeft <= 0) {
+            clearInterval(interval);
+            display.textContent = "0:00";
+            message.textContent = "Time's up — nice work getting started.";
+        }
+    }, 1000);
+</script>
+{% endblock %}
