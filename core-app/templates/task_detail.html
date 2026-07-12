@@ -42,11 +42,15 @@
                     <dd class="text-sm font-medium text-text">{{ task.buffer_deadline|friendly_date }}</dd>
                 </div>
                 <div>
-                    <dt class="uppercase text-xs tracking-wide font-semibold text-text/70 mb-1">Checkpoint 1 (50%)</dt>
+                    <dt class="uppercase text-xs tracking-wide font-semibold text-text/70 mb-1">
+                        Checkpoint 1 ({{ (task.checkpoint_1_ratio * 100)|round|int }}%)
+                    </dt>
                     <dd class="text-sm font-medium text-text">{{ task.checkpoint_1|friendly_date }}</dd>
                 </div>
                 <div>
-                    <dt class="uppercase text-xs tracking-wide font-semibold text-text/70 mb-1">Checkpoint 2 (75%)</dt>
+                    <dt class="uppercase text-xs tracking-wide font-semibold text-text/70 mb-1">
+                        Checkpoint 2 ({{ (task.checkpoint_2_ratio * 100)|round|int }}%)
+                    </dt>
                     <dd class="text-sm font-medium text-text">{{ task.checkpoint_2|friendly_date }}</dd>
                 </div>
             </dl>

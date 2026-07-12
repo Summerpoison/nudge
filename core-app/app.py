@@ -175,6 +175,15 @@ def change_status(task_id):
     return redirect(url_for("task_detail", task_id=task_id))
 
 
+DATE_FORMAT_PATTERNS = [
+    "%b %d, %Y %I:%M %p",
+    "%d %b %Y, %H:%M",
+    "%m/%d/%Y %I:%M %p",
+    "%d/%m/%Y %H:%M",
+    "%Y-%m-%d %H:%M",
+]
+
+
 @app.route("/settings", methods=["GET", "POST"])
 def settings():
     if request.method == "POST":
@@ -191,7 +200,13 @@ def settings():
             date_format=request.form["date_format"],
         )
         return redirect(url_for("settings"))
-    return render_template("settings.html", settings=g.settings)
+
+    # Preview examples are computed from the actual current moment, not
+    # baked into the template as a fixed string -- otherwise the shown
+    # "example" date silently goes stale as soon as it isn't today anymore.
+    now = datetime.now()
+    date_format_options = [(pattern, now.strftime(pattern)) for pattern in DATE_FORMAT_PATTERNS]
+    return render_template("settings.html", settings=g.settings, date_format_options=date_format_options)
 
 
 # --- JSON API (polled by the notification-worker, Part C) ---

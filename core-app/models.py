@@ -8,11 +8,19 @@ CHECKPOINT_2_RATIO = 0.75
 URGENT_THRESHOLD_DAYS = 3
 
 
+def round_to_nearest_30_minutes(value: datetime) -> datetime:
+    discard = timedelta(minutes=value.minute % 30, seconds=value.second, microseconds=value.microsecond)
+    rounded = value - discard
+    if discard >= timedelta(minutes=15):
+        rounded += timedelta(minutes=30)
+    return rounded
+
+
 def calculate_buffer_deadline(
     created_at: datetime, external_deadline: datetime, buffer_ratio: float = BUFFER_RATIO
 ) -> datetime:
     available_time = external_deadline - created_at
-    return created_at + buffer_ratio * available_time
+    return round_to_nearest_30_minutes(created_at + buffer_ratio * available_time)
 
 
 def calculate_checkpoints(
@@ -22,8 +30,8 @@ def calculate_checkpoints(
     checkpoint_2_ratio: float = CHECKPOINT_2_RATIO,
 ) -> tuple[datetime, datetime]:
     buffer_window = buffer_deadline - created_at
-    checkpoint_1 = created_at + checkpoint_1_ratio * buffer_window
-    checkpoint_2 = created_at + checkpoint_2_ratio * buffer_window
+    checkpoint_1 = round_to_nearest_30_minutes(created_at + checkpoint_1_ratio * buffer_window)
+    checkpoint_2 = round_to_nearest_30_minutes(created_at + checkpoint_2_ratio * buffer_window)
     return checkpoint_1, checkpoint_2
 
 
@@ -48,11 +56,21 @@ def create_task(
     if checkpoint_2 is None:
         checkpoint_2 = calc_checkpoint_2
 
+    # Back-calculated from the *actual* stored timestamps (not just copied
+    # from settings) so the ratio always matches reality exactly, even
+    # after 30-minute rounding or an explicit per-task override -- the
+    # label on the task-detail page must never claim a percentage that
+    # doesn't correspond to the real stored dates.
+    buffer_window = (buffer_deadline - created_at).total_seconds()
+    checkpoint_1_ratio = (checkpoint_1 - created_at).total_seconds() / buffer_window if buffer_window else 0
+    checkpoint_2_ratio = (checkpoint_2 - created_at).total_seconds() / buffer_window if buffer_window else 0
+
     conn = get_connection()
     cursor = conn.execute(
         """
-        INSERT INTO tasks (name, created_at, external_deadline, buffer_deadline, checkpoint_1, checkpoint_2, status)
-        VALUES (?, ?, ?, ?, ?, ?, 'active')
+        INSERT INTO tasks (name, created_at, external_deadline, buffer_deadline, checkpoint_1, checkpoint_2,
+                            checkpoint_1_ratio, checkpoint_2_ratio, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active')
         """,
         (
             name,
@@ -61,6 +79,8 @@ def create_task(
             buffer_deadline.isoformat(),
             checkpoint_1.isoformat(),
             checkpoint_2.isoformat(),
+            checkpoint_1_ratio,
+            checkpoint_2_ratio,
         ),
     )
     conn.commit()

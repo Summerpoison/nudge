@@ -107,6 +107,16 @@ Wird bei jedem Versand-Zyklus neu aufgerufen (nicht einmalig beim Start gecacht)
 
 Testdatensatz danach neu geseedet (`seed_data.py`), Settings dadurch wieder auf Defaults zurückgesetzt.
 
+## Nachträge aus der Nutzerinnen-Review
+
+Zwei echte Bugs und ein Feature-Wunsch, gefunden beim manuellen Durchklicken:
+
+- **Datumsformat-Auswahl zeigte fest eingebackene Beispieltexte** (z. B. immer "Jul 12, 2026 11:08 AM", unabhängig vom tatsächlichen aktuellen Datum) — auf Dauer irreführend, sobald das echte Datum nicht mehr übereinstimmt. Behoben: `app.py` berechnet die Beispiele jetzt bei jedem Aufruf frisch aus `datetime.now()` und reicht sie als `(pattern, example)`-Paare ans Template durch; die Optionen tragen jetzt zusätzlich den Zusatz "(right now)", um unmissverständlich klarzustellen, dass es sich um eine Live-Vorschau handelt.
+- **Checkpoint-Prozentangaben in der Task-Detail-Ansicht waren hartkodierter Text** (`"Checkpoint 1 (50%)"`, `"Checkpoint 2 (75%)"`), unabhängig davon, welches Verhältnis für den jeweiligen Task tatsächlich verwendet wurde. Nach einer Settings-Änderung (z. B. auf 40 %) zeigte ein neuer Task zwar die korrekt berechneten Zeitstempel, aber weiterhin das alte "(50%)"-Label — die Anzeige war damit falsch. **Behoben** durch zwei neue Spalten `checkpoint_1_ratio`/`checkpoint_2_ratio` direkt auf dem Task (nicht nur in den globalen Settings): `create_task()` berechnet das tatsächlich verwendete Verhältnis aus den *finalen* gespeicherten Zeitstempeln zurück (nicht einfach aus den zum Anlagezeitpunkt gültigen Settings kopiert) — dadurch stimmt die Anzeige garantiert auch nach Rundung oder einem expliziten Override exakt mit den echten Daten überein. Alte Tasks (mit den Schema-Defaults 0,5/0,75) zeigen weiterhin korrekt "(50%)"/"(75%)", wie es ihrer tatsächlichen Anlage entspricht — kein rückwirkendes "Anpassen" nötig oder gewünscht.
+- **Krumme Uhrzeiten bei berechneten Terminen** (z. B. "05:22 AM") wirkten willkürlich. Nach Abstimmung mit der Nutzerin: `round_to_nearest_30_minutes()` rundet Buffer-Deadline und beide Checkpoints (nicht die von der Nutzerin selbst eingegebene externe Deadline) kaufmännisch auf die nächsten 30 Minuten. Die Rundung sitzt direkt in `calculate_buffer_deadline()`/`calculate_checkpoints()`, betrifft also nur den Auto-Berechnungs-Pfad — ein expliziter Override (z. B. über die JSON-API) wird nicht angetastet.
+
+**Zurückgestellt (mit Nutzerin abgestimmt):** Eine echte Timezone-Einstellung wäre ein deutlich größerer Umbau (UTC-Speicherung intern, Konvertierung erst bei der Anzeige über `zoneinfo`) und aktuell kein reales Problem, da Server und Nutzerin dieselbe Maschine teilen. Als Backlog-Punkt festgehalten, siehe `backlog.md`.
+
 ## Nächster Schritt
 
 Schritt 10c: Buddy-System (ESC-FUNC-004, 005) — Eskalationsstufe 3 nutzt den in diesem Schritt bereits eingerichteten Buddy-Kontakt aus den Settings.

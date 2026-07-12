@@ -88,21 +88,11 @@
         <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">Date format</label>
         <select name="date_format"
                 class="w-full border-b border-black/20 focus:border-accent outline-none py-2 bg-transparent">
-            <option value="%b %d, %Y %I:%M %p" {{ 'selected' if settings.date_format == '%b %d, %Y %I:%M %p' }}>
-                Jul 12, 2026 11:08 AM
+            {% for pattern, example in date_format_options %}
+            <option value="{{ pattern }}" {{ 'selected' if settings.date_format == pattern }}>
+                {{ example }} (right now)
             </option>
-            <option value="%d %b %Y, %H:%M" {{ 'selected' if settings.date_format == '%d %b %Y, %H:%M' }}>
-                12 Jul 2026, 11:08
-            </option>
-            <option value="%m/%d/%Y %I:%M %p" {{ 'selected' if settings.date_format == '%m/%d/%Y %I:%M %p' }}>
-                07/12/2026 11:08 AM
-            </option>
-            <option value="%d/%m/%Y %H:%M" {{ 'selected' if settings.date_format == '%d/%m/%Y %H:%M' }}>
-                12/07/2026 11:08
-            </option>
-            <option value="%Y-%m-%d %H:%M" {{ 'selected' if settings.date_format == '%Y-%m-%d %H:%M' }}>
-                2026-07-12 11:08
-            </option>
+            {% endfor %}
         </select>
     </section>
 
