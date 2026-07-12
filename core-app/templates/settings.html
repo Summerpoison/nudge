@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Settings | Nudge{% endblock %}
+{% block content %}
+<h2 class="font-display font-bold text-3xl mb-8">Settings</h2>
+
+<form method="post" action="{{ url_for('settings') }}" class="flex flex-col gap-6 max-w-2xl">
+    <section class="bg-surface rounded-xl p-8">
+        <h3 class="font-display font-semibold text-lg mb-1">Email</h3>
+        <p class="text-sm text-text/60 mb-6">
+            Used by the notification-worker to send the weekly review email (SMTP only — never used to read mail).
+        </p>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">SMTP host</label>
+                <input type="text" name="smtp_host" value="{{ settings.smtp_host }}" required
+                       class="w-full border-b border-black/20 focus:border-accent outline-none py-2 bg-transparent">
+            </div>
+            <div>
+                <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">SMTP port</label>
+                <input type="number" name="smtp_port" value="{{ settings.smtp_port }}" required
+                       class="w-full border-b border-black/20 focus:border-accent outline-none py-2 bg-transparent">
+            </div>
+            <div>
+                <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">From address</label>
+                <input type="email" name="from_address" value="{{ settings.from_address }}" required
+                       class="w-full border-b border-black/20 focus:border-accent outline-none py-2 bg-transparent">
+            </div>
+            <div>
+                <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">To address</label>
+                <input type="email" name="to_address" value="{{ settings.to_address }}" required
+                       class="w-full border-b border-black/20 focus:border-accent outline-none py-2 bg-transparent">
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-surface rounded-xl p-8">
+        <h3 class="font-display font-semibold text-lg mb-1">Checkpoints</h3>
+        <p class="text-sm text-text/60 mb-6">
+            Default checkpoint spacing for new tasks, as a percentage of the buffer window (creation → buffer deadline).
+            Existing tasks keep the values they were created with.
+        </p>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">Checkpoint 1 (%)</label>
+                <input type="number" name="checkpoint_1_percent" min="1" max="99" step="1"
+                       value="{{ (settings.checkpoint_1_ratio * 100) | round | int }}" required
+                       class="w-full border-b border-black/20 focus:border-accent outline-none py-2 bg-transparent">
+            </div>
+            <div>
+                <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">Checkpoint 2 (%)</label>
+                <input type="number" name="checkpoint_2_percent" min="1" max="99" step="1"
+                       value="{{ (settings.checkpoint_2_ratio * 100) | round | int }}" required
+                       class="w-full border-b border-black/20 focus:border-accent outline-none py-2 bg-transparent">
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-surface rounded-xl p-8">
+        <h3 class="font-display font-semibold text-lg mb-1">Escalation</h3>
+        <p class="text-sm text-text/60 mb-6">
+            When a task counts as "urgent" (All-Tasks grouping), and who gets notified if it stays unresolved.
+        </p>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="col-span-2">
+                <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">
+                    Urgent threshold (days before buffer deadline)
+                </label>
+                <input type="number" name="urgent_threshold_days" min="0" step="0.5"
+                       value="{{ settings.urgent_threshold_days }}" required
+                       class="w-full border-b border-black/20 focus:border-accent outline-none py-2 bg-transparent">
+            </div>
+            <div>
+                <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">Buddy name</label>
+                <input type="text" name="buddy_name" value="{{ settings.buddy_name }}" placeholder="Optional"
+                       class="w-full border-b border-black/20 focus:border-accent outline-none py-2 bg-transparent">
+            </div>
+            <div>
+                <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">Buddy email</label>
+                <input type="email" name="buddy_email" value="{{ settings.buddy_email }}" placeholder="Optional"
+                       class="w-full border-b border-black/20 focus:border-accent outline-none py-2 bg-transparent">
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-surface rounded-xl p-8">
+        <h3 class="font-display font-semibold text-lg mb-1">Display</h3>
+        <p class="text-sm text-text/60 mb-6">How dates and times are shown throughout the app.</p>
+        <label class="text-xs uppercase tracking-wide font-semibold text-text/70 block mb-1">Date format</label>
+        <select name="date_format"
+                class="w-full border-b border-black/20 focus:border-accent outline-none py-2 bg-transparent">
+            <option value="%b %d, %Y %I:%M %p" {{ 'selected' if settings.date_format == '%b %d, %Y %I:%M %p' }}>
+                Jul 12, 2026 11:08 AM
+            </option>
+            <option value="%d %b %Y, %H:%M" {{ 'selected' if settings.date_format == '%d %b %Y, %H:%M' }}>
+                12 Jul 2026, 11:08
+            </option>
+            <option value="%m/%d/%Y %I:%M %p" {{ 'selected' if settings.date_format == '%m/%d/%Y %I:%M %p' }}>
+                07/12/2026 11:08 AM
+            </option>
+            <option value="%d/%m/%Y %H:%M" {{ 'selected' if settings.date_format == '%d/%m/%Y %H:%M' }}>
+                12/07/2026 11:08
+            </option>
+            <option value="%Y-%m-%d %H:%M" {{ 'selected' if settings.date_format == '%Y-%m-%d %H:%M' }}>
+                2026-07-12 11:08
+            </option>
+        </select>
+    </section>
+
+    <button type="submit" class="bg-accent text-white font-semibold px-6 py-3 rounded-lg self-start">
+        Save Settings
+    </button>
+</form>
+{% endblock %}

@@ -8,15 +8,22 @@ CHECKPOINT_2_RATIO = 0.75
 URGENT_THRESHOLD_DAYS = 3
 
 
-def calculate_buffer_deadline(created_at: datetime, external_deadline: datetime) -> datetime:
+def calculate_buffer_deadline(
+    created_at: datetime, external_deadline: datetime, buffer_ratio: float = BUFFER_RATIO
+) -> datetime:
     available_time = external_deadline - created_at
-    return created_at + BUFFER_RATIO * available_time
+    return created_at + buffer_ratio * available_time
 
 
-def calculate_checkpoints(created_at: datetime, buffer_deadline: datetime) -> tuple[datetime, datetime]:
+def calculate_checkpoints(
+    created_at: datetime,
+    buffer_deadline: datetime,
+    checkpoint_1_ratio: float = CHECKPOINT_1_RATIO,
+    checkpoint_2_ratio: float = CHECKPOINT_2_RATIO,
+) -> tuple[datetime, datetime]:
     buffer_window = buffer_deadline - created_at
-    checkpoint_1 = created_at + CHECKPOINT_1_RATIO * buffer_window
-    checkpoint_2 = created_at + CHECKPOINT_2_RATIO * buffer_window
+    checkpoint_1 = created_at + checkpoint_1_ratio * buffer_window
+    checkpoint_2 = created_at + checkpoint_2_ratio * buffer_window
     return checkpoint_1, checkpoint_2
 
 
@@ -28,11 +35,14 @@ def create_task(
     checkpoint_2: datetime | None = None,
 ) -> dict:
     created_at = datetime.now()
+    settings = get_settings()
 
     if buffer_deadline is None:
         buffer_deadline = calculate_buffer_deadline(created_at, external_deadline)
 
-    calc_checkpoint_1, calc_checkpoint_2 = calculate_checkpoints(created_at, buffer_deadline)
+    calc_checkpoint_1, calc_checkpoint_2 = calculate_checkpoints(
+        created_at, buffer_deadline, settings["checkpoint_1_ratio"], settings["checkpoint_2_ratio"]
+    )
     if checkpoint_1 is None:
         checkpoint_1 = calc_checkpoint_1
     if checkpoint_2 is None:
@@ -116,11 +126,27 @@ def is_checkpoint_due(task: dict) -> bool:
     return now >= checkpoint_1 or now >= checkpoint_2
 
 
-def is_urgent(task: dict) -> bool:
+def is_urgent(task: dict, threshold_days: float = URGENT_THRESHOLD_DAYS) -> bool:
     if task["status"] != "active":
         return False
     buffer_deadline = datetime.fromisoformat(task["buffer_deadline"])
-    return buffer_deadline - datetime.now() < timedelta(days=URGENT_THRESHOLD_DAYS)
+    return buffer_deadline - datetime.now() < timedelta(days=threshold_days)
+
+
+def get_settings() -> dict:
+    conn = get_connection()
+    row = conn.execute("SELECT * FROM settings WHERE id = 1").fetchone()
+    conn.close()
+    return dict(row)
+
+
+def update_settings(**fields) -> dict:
+    conn = get_connection()
+    assignments = ", ".join(f"{key} = ?" for key in fields)
+    conn.execute(f"UPDATE settings SET {assignments} WHERE id = 1", list(fields.values()))
+    conn.commit()
+    conn.close()
+    return get_settings()
 
 
 def set_focus_tasks(task_ids: list[int]) -> list[int]:

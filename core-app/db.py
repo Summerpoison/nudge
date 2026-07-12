@@ -38,5 +38,25 @@ def init_db():
         )
         """
     )
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS settings (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            smtp_host TEXT NOT NULL DEFAULT 'localhost',
+            smtp_port INTEGER NOT NULL DEFAULT 1025,
+            from_address TEXT NOT NULL DEFAULT 'nudge@localhost',
+            to_address TEXT NOT NULL DEFAULT 'user@localhost',
+            checkpoint_1_ratio REAL NOT NULL DEFAULT 0.5,
+            checkpoint_2_ratio REAL NOT NULL DEFAULT 0.75,
+            urgent_threshold_days REAL NOT NULL DEFAULT 3,
+            buddy_name TEXT NOT NULL DEFAULT '',
+            buddy_email TEXT NOT NULL DEFAULT '',
+            date_format TEXT NOT NULL DEFAULT '%b %d, %Y %I:%M %p'
+        )
+        """
+    )
+    # Singleton row (CHECK id = 1 enforces this at the schema level) --
+    # INSERT OR IGNORE means this is a no-op on every init after the first.
+    conn.execute("INSERT OR IGNORE INTO settings (id) VALUES (1)")
     conn.commit()
     conn.close()

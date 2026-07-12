@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Flask, abort, jsonify, redirect, render_template, request, send_from_directory, url_for
+from flask import Flask, abort, g, jsonify, redirect, render_template, request, send_from_directory, url_for
 from werkzeug.utils import secure_filename
 
 from db import init_db
@@ -9,11 +9,13 @@ from models import (
     buffer_progress_percent,
     create_task,
     get_all_tasks,
+    get_settings,
     get_task,
     get_task_events,
     is_checkpoint_due,
     is_urgent,
     set_focus_tasks,
+    update_settings,
     update_task_status,
 )
 from uploads import delete_attachment, list_attachments, save_attachment, task_upload_dir
@@ -22,10 +24,19 @@ app = Flask(__name__)
 init_db()
 
 
+@app.before_request
+def load_settings():
+    # Cached once per request in Flask's request-scoped `g` object so
+    # every date rendered on a page (potentially dozens on All-Tasks)
+    # doesn't hit the database individually.
+    g.settings = get_settings()
+
+
 def friendly_date(value):
     if not value:
         return ""
-    return datetime.fromisoformat(value).strftime("%b %d, %Y %I:%M %p")
+    date_format = g.settings["date_format"] if "settings" in g else "%b %d, %Y %I:%M %p"
+    return datetime.fromisoformat(value).strftime(date_format)
 
 
 app.jinja_env.filters["friendly_date"] = friendly_date
@@ -53,11 +64,15 @@ def all_tasks():
         name = request.form["name"]
         external_deadline = datetime.fromisoformat(request.form["external_deadline"])
         create_task(name, external_deadline)
-        return redirect(url_for("dashboard"))
+        redirect_to = request.form.get("redirect_to", "dashboard")
+        if redirect_to not in ("dashboard", "all_tasks"):
+            redirect_to = "dashboard"
+        return redirect(url_for(redirect_to))
 
     tasks = get_all_tasks()
-    urgent_tasks = [t for t in tasks if t["status"] == "active" and is_urgent(t)]
-    not_urgent_tasks = [t for t in tasks if t["status"] == "active" and not is_urgent(t)]
+    threshold = g.settings["urgent_threshold_days"]
+    urgent_tasks = [t for t in tasks if t["status"] == "active" and is_urgent(t, threshold)]
+    not_urgent_tasks = [t for t in tasks if t["status"] == "active" and not is_urgent(t, threshold)]
     other_tasks = [t for t in tasks if t["status"] != "active"]
     return render_template(
         "all_tasks.html",
@@ -160,6 +175,25 @@ def change_status(task_id):
     return redirect(url_for("task_detail", task_id=task_id))
 
 
+@app.route("/settings", methods=["GET", "POST"])
+def settings():
+    if request.method == "POST":
+        update_settings(
+            smtp_host=request.form["smtp_host"],
+            smtp_port=int(request.form["smtp_port"]),
+            from_address=request.form["from_address"],
+            to_address=request.form["to_address"],
+            checkpoint_1_ratio=float(request.form["checkpoint_1_percent"]) / 100,
+            checkpoint_2_ratio=float(request.form["checkpoint_2_percent"]) / 100,
+            urgent_threshold_days=float(request.form["urgent_threshold_days"]),
+            buddy_name=request.form.get("buddy_name", ""),
+            buddy_email=request.form.get("buddy_email", ""),
+            date_format=request.form["date_format"],
+        )
+        return redirect(url_for("settings"))
+    return render_template("settings.html", settings=g.settings)
+
+
 # --- JSON API (polled by the notification-worker, Part C) ---
 
 
@@ -198,6 +232,11 @@ def api_set_focus_tasks():
     for task_id in applied:
         add_task_event(task_id, "marked_focus_task", "Marked as a focus task for this week")
     return jsonify(focus_task_ids=applied)
+
+
+@app.route("/api/settings", methods=["GET"])
+def api_get_settings():
+    return jsonify(g.settings)
 
 
 if __name__ == "__main__":

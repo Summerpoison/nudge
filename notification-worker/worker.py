@@ -16,12 +16,17 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 CORE_APP_URL = "http://127.0.0.1:3000"
 POLL_INTERVAL_SECONDS = 30
-
-SMTP_HOST = "localhost"
-SMTP_PORT = 1025
-FROM_ADDRESS = "nudge@localhost"
-TO_ADDRESS = "user@localhost"
 REVIEW_EMAIL_INTERVAL_SECONDS = 60  # stands in for "weekly" during local testing
+
+# Fallback used only if core-app's /api/settings can't be reached -- the
+# worker should still degrade gracefully rather than crash for lack of
+# settings, same resilience pattern as fetch_open_tasks().
+DEFAULT_SETTINGS = {
+    "smtp_host": "localhost",
+    "smtp_port": 1025,
+    "from_address": "nudge@localhost",
+    "to_address": "user@localhost",
+}
 
 # Mailpit has no IMAP server (confirmed via `mailpit --help`) — only SMTP,
 # POP3, and its own REST API. REVIEW-FUNC-004/REVIEW-NFR-001 name IMAP
@@ -54,6 +59,16 @@ def fetch_open_tasks() -> list[dict] | None:
         return None
 
     return [task for task in tasks if task["status"] == "active"]
+
+
+def fetch_settings() -> dict:
+    url = f"{CORE_APP_URL}/api/settings"
+    try:
+        with urllib.request.urlopen(url, timeout=5) as response:
+            return json.loads(response.read())
+    except urllib.error.URLError as error:
+        log(f"Could not fetch settings from core-app at {url}, using defaults: {error}")
+        return DEFAULT_SETTINGS
 
 
 def post_focus_tasks(task_ids: list[int]) -> None:
@@ -90,7 +105,7 @@ def next_checkpoint(task: dict) -> str:
 TASKS_PER_BLOCK = 5
 
 
-def build_review_email(tasks: list[dict]) -> MIMEText:
+def build_review_email(tasks: list[dict], settings: dict) -> MIMEText:
     task_ids = ",".join(str(task["id"]) for task in tasks)
     subject = f"Nudge Weekly Review [ids: {task_ids}]"
 
@@ -110,23 +125,25 @@ def build_review_email(tasks: list[dict]) -> MIMEText:
 
     message = MIMEText("\n".join(lines))
     message["Subject"] = subject
-    message["From"] = FROM_ADDRESS
-    message["To"] = TO_ADDRESS
+    message["From"] = settings["from_address"]
+    message["To"] = settings["to_address"]
     message["Message-ID"] = make_msgid()
     return message
 
 
-def send_review_email(tasks: list[dict]) -> None:
+def send_review_email(tasks: list[dict], settings: dict) -> None:
     if not tasks:
         log("No open tasks — skipping weekly review email.")
         return
 
-    message = build_review_email(tasks)
+    message = build_review_email(tasks, settings)
+    smtp_host = settings["smtp_host"]
+    smtp_port = settings["smtp_port"]
     try:
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=5) as server:
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=5) as server:
             server.send_message(message)
     except OSError as error:
-        log(f"Could not send weekly review email via {SMTP_HOST}:{SMTP_PORT}: {error}")
+        log(f"Could not send weekly review email via {smtp_host}:{smtp_port}: {error}")
         return
 
     log(f"Sent weekly review email ({len(tasks)} task(s)), subject: {message['Subject']}")
@@ -214,7 +231,7 @@ def run() -> None:
 
             now = time.monotonic()
             if last_review_sent is None or now - last_review_sent >= REVIEW_EMAIL_INTERVAL_SECONDS:
-                send_review_email(tasks)
+                send_review_email(tasks, fetch_settings())
                 last_review_sent = now
 
         check_for_replies()
