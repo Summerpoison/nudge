@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_add_task_form.html" import add_task_form %}
 {% block title %}All Tasks | Nudge{% endblock %}
 {% block content %}
 {% macro task_row(task) %}
@@ -81,17 +82,25 @@
     {% for task in tasks %}
     {{ task_row(task) }}
     {% else %}
-    <p class="text-text/60">No tasks yet — add your first one from the Dashboard.</p>
+    <p class="text-text/60">No tasks yet — use the + button to add one.</p>
     {% endfor %}
 </div>
 
-<section class="bg-surface rounded-xl p-6 max-w-md">
-    <h3 class="font-display font-semibold text-lg mb-2">Looking for "Add a task"?</h3>
-    <p class="text-sm text-text/60">
-        It now lives on the <a href="{{ url_for('dashboard') }}" class="text-accent hover:underline">Dashboard</a>.
-        This page is your backlog — a full view of everything open, grouped by urgency.
-    </p>
-</section>
+<!-- Floating Action Button -->
+<button type="button" onclick="document.getElementById('add-task-modal').classList.remove('hidden')"
+        class="fixed bottom-8 right-8 w-14 h-14 bg-accent text-white rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform">
+    <span class="material-symbols-outlined text-3xl">add</span>
+</button>
+
+<!-- Add Task Modal -->
+<div id="add-task-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6">
+    <div class="absolute inset-0 bg-black/40"
+         onclick="document.getElementById('add-task-modal').classList.add('hidden')"></div>
+    <div class="relative bg-surface rounded-xl p-6 max-w-md w-full">
+        <h3 class="font-display font-semibold text-lg mb-4">Add a task</h3>
+        {{ add_task_form('all_tasks') }}
+    </div>
+</div>
 
 <script>
     function showView(view) {
@@ -104,14 +113,18 @@
 
         if (view === 'grouped') {
             grouped.classList.remove('hidden');
+            grouped.classList.add('flex');
             list.classList.add('hidden');
+            list.classList.remove('flex');
             groupedToggle.classList.add(...active);
             groupedToggle.classList.remove(...inactive);
             listToggle.classList.remove(...active);
             listToggle.classList.add(...inactive);
         } else {
             list.classList.remove('hidden');
+            list.classList.add('flex');
             grouped.classList.add('hidden');
+            grouped.classList.remove('flex');
             listToggle.classList.add(...active);
             listToggle.classList.remove(...inactive);
             groupedToggle.classList.remove(...active);

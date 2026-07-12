@@ -18,24 +18,24 @@
     </form>
 
     <div class="grid grid-cols-1 gap-4 mb-8">
-        <button type="button" onclick="selectReason('stuck')"
-                class="flex items-center gap-4 bg-surface rounded-lg p-5 text-left hover:shadow-sm transition-shadow">
+        <button type="button" onclick="selectReason('stuck')" data-reason="stuck"
+                class="reason-btn flex items-center gap-4 bg-surface rounded-lg p-5 text-left hover:shadow-sm transition-shadow border-2 border-transparent">
             <span class="material-symbols-outlined text-accent">groups</span>
             <div>
                 <h4 class="font-semibold">Stuck / need help</h4>
                 <p class="text-sm text-text/60">Draft a quick ask for a second pair of eyes.</p>
             </div>
         </button>
-        <button type="button" onclick="selectReason('waiting')"
-                class="flex items-center gap-4 bg-surface rounded-lg p-5 text-left hover:shadow-sm transition-shadow">
+        <button type="button" onclick="selectReason('waiting')" data-reason="waiting"
+                class="reason-btn flex items-center gap-4 bg-surface rounded-lg p-5 text-left hover:shadow-sm transition-shadow border-2 border-transparent">
             <span class="material-symbols-outlined text-accent">hourglass_empty</span>
             <div>
                 <h4 class="font-semibold">Waiting on someone</h4>
                 <p class="text-sm text-text/60">Draft a gentle follow-up nudge.</p>
             </div>
         </button>
-        <button type="button" onclick="selectReason('scope')"
-                class="flex items-center gap-4 bg-surface rounded-lg p-5 text-left hover:shadow-sm transition-shadow">
+        <button type="button" onclick="selectReason('scope')" data-reason="scope"
+                class="reason-btn flex items-center gap-4 bg-surface rounded-lg p-5 text-left hover:shadow-sm transition-shadow border-2 border-transparent">
             <span class="material-symbols-outlined text-accent">rule</span>
             <div>
                 <h4 class="font-semibold">Scope or deadline problem</h4>
@@ -95,6 +95,12 @@
         document.getElementById('recipient-input').value = '';
         document.getElementById('draft-form').classList.remove('hidden');
         document.getElementById('draft-form').scrollIntoView({ behavior: 'smooth' });
+
+        document.querySelectorAll('.reason-btn').forEach((btn) => {
+            const isSelected = btn.dataset.reason === key;
+            btn.classList.toggle('border-accent', isSelected);
+            btn.classList.toggle('border-transparent', !isSelected);
+        });
     }
 
     document.getElementById('draft-form').addEventListener('submit', () => {

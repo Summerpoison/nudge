@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Focus Timer: {{ task.name }} | Nudge{% endblock %}
 {% block content %}
-<a href="{{ url_for('task_detail', task_id=task.id) }}" class="text-sm text-text/60 hover:text-text mb-6 inline-block">
-    &larr; Back to Task
+<a href="{{ url_for('triage', task_id=task.id) }}" class="text-sm text-text/60 hover:text-text mb-6 inline-block">
+    &larr; Back to Triage
 </a>
 
 <div class="max-w-md text-center mx-auto mt-10">

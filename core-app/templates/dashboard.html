@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_add_task_form.html" import add_task_form %}
 {% block title %}Dashboard | Nudge{% endblock %}
 {% block content %}
 <h2 class="font-display font-bold text-3xl mb-8">Dashboard</h2>
@@ -24,7 +25,7 @@
     </a>
 </section>
 {% else %}
-<p class="text-text/60 mb-10">No active tasks yet. Add one from All Tasks.</p>
+<p class="text-text/60 mb-10">No active tasks yet. Add one below.</p>
 {% endif %}
 
 <section class="mb-10">
@@ -52,14 +53,6 @@
 
 <section class="bg-surface rounded-xl p-6 max-w-md">
     <h3 class="font-display font-semibold text-lg mb-4">Add a task</h3>
-    <form method="post" action="{{ url_for('all_tasks') }}" class="flex flex-col gap-4">
-        <input type="text" name="name" placeholder="Task name" required
-               class="border-b border-black/20 focus:border-primary outline-none py-2 bg-transparent">
-        <input type="datetime-local" name="external_deadline" required
-               class="border-b border-black/20 focus:border-primary outline-none py-2 bg-transparent">
-        <button type="submit" class="bg-accent text-white font-semibold px-6 py-3 rounded-lg self-start">
-            Add Task
-        </button>
-    </form>
+    {{ add_task_form('dashboard') }}
 </section>
 {% endblock %}

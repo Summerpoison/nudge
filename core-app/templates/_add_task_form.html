@@ -1,0 +1,12 @@
+{% macro add_task_form(redirect_to) %}
+<form method="post" action="{{ url_for('all_tasks') }}" class="flex flex-col gap-4">
+    <input type="hidden" name="redirect_to" value="{{ redirect_to }}">
+    <input type="text" name="name" placeholder="Task name" required
+           class="border-b border-black/20 focus:border-primary outline-none py-2 bg-transparent">
+    <input type="datetime-local" name="external_deadline" required
+           class="border-b border-black/20 focus:border-primary outline-none py-2 bg-transparent">
+    <button type="submit" class="bg-accent text-white font-semibold px-6 py-3 rounded-lg self-start">
+        Add Task
+    </button>
+</form>
+{% endmacro %}
