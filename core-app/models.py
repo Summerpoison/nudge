@@ -105,7 +105,11 @@ def get_all_tasks() -> list[dict]:
 
 def update_task_status(task_id: int, status: str) -> None:
     conn = get_connection()
-    conn.execute("UPDATE tasks SET status = ? WHERE id = ?", (status, task_id))
+    # Resetting buddy_alerted here means a task that gets reopened after
+    # being put on hold or marked done starts its escalation state fresh --
+    # otherwise a task alerted once could never trigger a second, genuinely
+    # new round of buddy attention after being resumed.
+    conn.execute("UPDATE tasks SET status = ?, buddy_alerted = 0 WHERE id = ?", (status, task_id))
     conn.commit()
     conn.close()
 
@@ -151,6 +155,57 @@ def is_urgent(task: dict, threshold_days: float = URGENT_THRESHOLD_DAYS) -> bool
         return False
     buffer_deadline = datetime.fromisoformat(task["buffer_deadline"])
     return buffer_deadline - datetime.now() < timedelta(days=threshold_days)
+
+
+# Only these event types count as the "did the required checkpoint
+# interaction" per CHKP-FUNC-004 -- a status change or focus-task marking
+# is not a check-in.
+CHECK_IN_EVENT_TYPES = {"artifact_submitted", "triage_draft_sent"}
+
+
+def _has_check_in(events: list[dict], window_start: datetime, window_end: datetime) -> bool:
+    return any(
+        event["event_type"] in CHECK_IN_EVENT_TYPES
+        and window_start <= datetime.fromisoformat(event["created_at"]) <= window_end
+        for event in events
+    )
+
+
+def needs_buddy_alert(task: dict, threshold_days: float = URGENT_THRESHOLD_DAYS) -> bool:
+    """ESC-FUNC-004: escalation stage 3.
+
+    Buffer deadline blown is always a definite alert. Short of that, a
+    single missed checkpoint isn't enough on its own -- checking in at
+    checkpoint 1 but skipping checkpoint 2 usually still leaves enough
+    runway to hit the buffer deadline. Only *both* checkpoints going by
+    without an interaction means the buddy gets pulled in.
+    """
+    if task["status"] != "active" or task["buddy_alerted"]:
+        return False
+    if not is_urgent(task, threshold_days):
+        return False
+
+    now = datetime.now()
+    created_at = datetime.fromisoformat(task["created_at"])
+    checkpoint_2 = datetime.fromisoformat(task["checkpoint_2"])
+    buffer_deadline = datetime.fromisoformat(task["buffer_deadline"])
+
+    if now >= buffer_deadline:
+        return True
+    if now < checkpoint_2:
+        return False
+
+    events = get_task_events(task["id"])
+    checkpoint_1_missed = not _has_check_in(events, created_at, checkpoint_2)
+    checkpoint_2_missed = not _has_check_in(events, checkpoint_2, now)
+    return checkpoint_1_missed and checkpoint_2_missed
+
+
+def mark_buddy_alerted(task_id: int) -> None:
+    conn = get_connection()
+    conn.execute("UPDATE tasks SET buddy_alerted = 1 WHERE id = ?", (task_id,))
+    conn.commit()
+    conn.close()
 
 
 def get_settings() -> dict:

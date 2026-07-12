@@ -25,7 +25,8 @@ def init_db():
             checkpoint_1_ratio REAL NOT NULL DEFAULT 0.5,
             checkpoint_2_ratio REAL NOT NULL DEFAULT 0.75,
             status TEXT NOT NULL DEFAULT 'active',
-            is_focus_task INTEGER NOT NULL DEFAULT 0
+            is_focus_task INTEGER NOT NULL DEFAULT 0,
+            buddy_alerted INTEGER NOT NULL DEFAULT 0
         )
         """
     )

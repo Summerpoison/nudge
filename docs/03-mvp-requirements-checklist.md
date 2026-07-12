@@ -40,10 +40,10 @@
 ## ESC — Eisenhower-Filter & Eskalation (Teil C, Erweiterung)
 
 - [x] **ESC-FUNC-001** (Must) — Jeder Task hat einen berechneten (nicht manuell gesetzten) Zustand "Urgent" ja/nein, basierend auf Restzeit bis Buffer-Deadline (Default-Schwellenwert: < 3 Tage). *(Schritt 10a — `is_urgent()`, reine Funktion, kein gespeichertes Feld. Kein "Important"-Feld eingeführt, siehe `13-step10a-dashboard-and-eisenhower.md`.)*
-- [ ] **ESC-FUNC-002** (Must) — Nur Tasks im Zustand "Important + Urgent" lösen die volle Eskalationskette (Reminder, ggf. Buddy-Alert) aus. "Important + Not Urgent"-Tasks werden getrackt, aber ohne aktive Benachrichtigung.
+- [x] **ESC-FUNC-002** (Must) — Nur Tasks im Zustand "Important + Urgent" lösen die volle Eskalationskette (Reminder, ggf. Buddy-Alert) aus. "Important + Not Urgent"-Tasks werden getrackt, aber ohne aktive Benachrichtigung. *(Schritt 10c — kein separates "Important"-Feld, siehe 10a; Gate ist `is_urgent()` plus die Checkpoint-Miss-Regel aus `needs_buddy_alert()`.)*
 - [x] **ESC-FUNC-003** (Should) — Der Urgent-Schwellenwert ist in den Settings konfigurierbar (Default-Wert reicht für MVP-Funktionalität). *(Schritt 10b.)*
-- [ ] **ESC-FUNC-004** (Should) — Ein hinterlegter Accountability-Buddy-Kontakt (Settings) wird bei Eskalationsstufe 3 (75%-Checkpoint verpasst / Buffer-Deadline überschritten) für "Important + Urgent"-Tasks automatisch benachrichtigt. *(Kontakt-Eingabefeld existiert seit Schritt 10b, Eskalationslogik selbst folgt in Schritt 10c.)*
-- [ ] **ESC-FUNC-005** (Should) — Die Buddy-Benachrichtigung enthält nur "Task X braucht Aufmerksamkeit", keine vollen Task-Details.
+- [x] **ESC-FUNC-004** (Should) — Ein hinterlegter Accountability-Buddy-Kontakt (Settings) wird bei Eskalationsstufe 3 (75%-Checkpoint verpasst / Buffer-Deadline überschritten) für "Important + Urgent"-Tasks automatisch benachrichtigt. *(Schritt 10c — verschärft gegenüber dem ursprünglichen Wortlaut: Alert erst wenn beide Checkpoints ohne Interaktion verstrichen sind, ODER die Buffer-Deadline selbst überschritten ist; mit Nutzerin abgestimmt, siehe `15-step10c-buddy-system.md`.)*
+- [x] **ESC-FUNC-005** (Should) — Die Buddy-Benachrichtigung enthält nur "Task X braucht Aufmerksamkeit", keine vollen Task-Details. *(Schritt 10c.)*
 - [ ] **ESC-FUNC-006** (Could) — Pro-Task individualisierbare Urgent-Schwellenwerte.
 - [ ] **ESC-FUNC-007** (Could) — Live-Neuberechnung des Eisenhower-Quadranten bei jedem App-Öffnen statt nur im täglichen Cron-Durchlauf.
 

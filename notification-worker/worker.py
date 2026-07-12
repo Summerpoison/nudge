@@ -26,6 +26,8 @@ DEFAULT_SETTINGS = {
     "smtp_port": 1025,
     "from_address": "nudge@localhost",
     "to_address": "user@localhost",
+    "buddy_name": "",
+    "buddy_email": "",
 }
 
 # Mailpit has no IMAP server (confirmed via `mailpit --help`) — only SMTP,
@@ -149,6 +151,56 @@ def send_review_email(tasks: list[dict], settings: dict) -> None:
     log(f"Sent weekly review email ({len(tasks)} task(s)), subject: {message['Subject']}")
 
 
+def build_buddy_alert_email(task: dict, settings: dict) -> MIMEText:
+    # ESC-FUNC-005: the buddy sees only that the task needs attention --
+    # no deadline, status, or history, deliberately kept minimal.
+    subject = f"Nudge Buddy Alert: {task['name']}"
+    greeting = f"Hi {settings['buddy_name']},\n\n" if settings.get("buddy_name") else ""
+    message = MIMEText(f"{greeting}{task['name']} needs attention.\n")
+    message["Subject"] = subject
+    message["From"] = settings["from_address"]
+    message["To"] = settings["buddy_email"]
+    return message
+
+
+def send_buddy_alert(task: dict, settings: dict) -> bool:
+    message = build_buddy_alert_email(task, settings)
+    smtp_host = settings["smtp_host"]
+    smtp_port = settings["smtp_port"]
+    try:
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=5) as server:
+            server.send_message(message)
+    except OSError as error:
+        log(f"Could not send buddy alert for task #{task['id']} via {smtp_host}:{smtp_port}: {error}")
+        return False
+
+    log(f"Sent buddy alert for task #{task['id']} ({task['name']}) to {settings['buddy_email']}")
+    return True
+
+
+def mark_buddy_alerted(task_id: int) -> None:
+    url = f"{CORE_APP_URL}/api/tasks/{task_id}/buddy-alert"
+    request_obj = urllib.request.Request(url, data=b"{}", headers={"Content-Type": "application/json"}, method="POST")
+    try:
+        urllib.request.urlopen(request_obj, timeout=5)
+    except urllib.error.URLError as error:
+        log(f"Could not mark buddy alert as sent for task #{task_id}: {error}")
+
+
+def send_buddy_alerts(tasks: list[dict], settings: dict) -> None:
+    # needs_buddy_alert is computed entirely on the core-app side (it needs
+    # task_events, which the worker never sees) -- the worker's role here is
+    # pure I/O: send the mail, then write back that it's done so the next
+    # poll cycle doesn't re-alert for the same task.
+    if not settings.get("buddy_email"):
+        return
+    for task in tasks:
+        if not task.get("needs_buddy_alert"):
+            continue
+        if send_buddy_alert(task, settings):
+            mark_buddy_alerted(task["id"])
+
+
 def parse_top_priorities(body: str, valid_ids: set[int]) -> list[int]:
     priorities: list[int] = []
     for match in re.finditer(r"#?\b(\d+)\b", body):
@@ -229,9 +281,15 @@ def run() -> None:
             names = [task["name"] for task in tasks]
             log(f"{len(tasks)} open task(s): {names}")
 
+            # Fetched every cycle (not just on the review-email interval) --
+            # escalation stage 3 is time-critical and shouldn't wait for the
+            # next weekly-review window.
+            settings = fetch_settings()
+            send_buddy_alerts(tasks, settings)
+
             now = time.monotonic()
             if last_review_sent is None or now - last_review_sent >= REVIEW_EMAIL_INTERVAL_SECONDS:
-                send_review_email(tasks, fetch_settings())
+                send_review_email(tasks, settings)
                 last_review_sent = now
 
         check_for_replies()

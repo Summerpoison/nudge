@@ -14,6 +14,8 @@ from models import (
     get_task_events,
     is_checkpoint_due,
     is_urgent,
+    mark_buddy_alerted,
+    needs_buddy_alert,
     set_focus_tasks,
     update_settings,
     update_task_status,
@@ -228,7 +230,14 @@ def api_create_task():
 
 @app.route("/api/tasks", methods=["GET"])
 def api_list_tasks():
-    return jsonify(get_all_tasks())
+    threshold = g.settings["urgent_threshold_days"]
+    tasks = get_all_tasks()
+    for task in tasks:
+        # The worker has no DB of its own and can't see task_events, so
+        # the missed-checkpoint logic (needs_buddy_alert) has to run here
+        # and travel as a plain flag -- the worker's job is just to act on it.
+        task["needs_buddy_alert"] = needs_buddy_alert(task, threshold)
+    return jsonify(tasks)
 
 
 @app.route("/api/tasks/<int:task_id>", methods=["GET"])
@@ -252,6 +261,16 @@ def api_set_focus_tasks():
 @app.route("/api/settings", methods=["GET"])
 def api_get_settings():
     return jsonify(g.settings)
+
+
+@app.route("/api/tasks/<int:task_id>/buddy-alert", methods=["POST"])
+def api_mark_buddy_alerted(task_id):
+    task = get_task(task_id)
+    if task is None:
+        return jsonify(error="not found"), 404
+    mark_buddy_alerted(task_id)
+    add_task_event(task_id, "buddy_alert_sent", "Buddy notified: task needs attention")
+    return jsonify(status="ok")
 
 
 if __name__ == "__main__":
